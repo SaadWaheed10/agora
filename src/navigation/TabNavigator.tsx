@@ -6,40 +6,51 @@ import { Home, Video } from 'lucide-react-native';
 import HomeScreen from '../screens/HomeScreen';
 import AgoraScreen from '../screens/AgoraScreen';
 import { RootTabParamList } from './types';
+import { Colors, getThemeColors } from '../constants';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
+// Icon components defined outside render to avoid React warnings
+const HomeIcon = ({ color, size }: { color: string; size: number }) => (
+  <Home size={size} color={color} />
+);
+
+const VideoIcon = ({ color, size }: { color: string; size: number }) => (
+  <Video size={size} color={color} />
+);
+
 const TabNavigator = () => {
   const isDarkMode = useColorScheme() === 'dark';
+  const themeColors = getThemeColors(isDarkMode);
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: Colors.tabBar.active,
+        tabBarInactiveTintColor: Colors.tabBar.inactive,
         tabBarStyle: {
-          backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
-          borderTopColor: isDarkMode ? '#38383A' : '#C6C6C8',
+          backgroundColor: themeColors.tabBarBackground,
+          borderTopColor: themeColors.tabBarBorder,
         },
         headerStyle: {
-          backgroundColor: isDarkMode ? '#1C1C1E' : '#FFFFFF',
+          backgroundColor: themeColors.cardBackground,
         },
-        headerTintColor: isDarkMode ? '#FFFFFF' : '#000000',
+        headerTintColor: themeColors.textPrimary,
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tab.Screen
         name="Agora"
         component={AgoraScreen}
         options={{
-          tabBarIcon: ({ color, size }) => <Video size={size} color={color} />,
+          tabBarIcon: VideoIcon,
         }}
       />
     </Tab.Navigator>

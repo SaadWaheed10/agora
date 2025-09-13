@@ -21,24 +21,46 @@ This document describes the bottom tab navigation implementation for the Agora R
 
 ```
 src/
+  constants/
+    colors.ts          # Color system and theme definitions
+    index.ts           # Constants barrel exports
+    README.md          # Constants documentation
   navigation/
-    AppNavigator.tsx    # Main navigation container
-    TabNavigator.tsx    # Bottom tab navigator
-    types.ts           # Navigation type definitions
-    index.ts           # Barrel exports
-    README.md          # Navigation documentation
+    AppNavigator.tsx   # Main navigation container
+    TabNavigator.tsx   # Bottom tab navigator
+    types.ts          # Navigation type definitions
+    index.ts          # Navigation barrel exports
+    README.md         # Navigation documentation
   screens/
-    HomeScreen.tsx     # Home tab screen
-    AgoraScreen.tsx    # Agora tab screen
-App.tsx               # Main app component
+    HomeScreen.tsx    # Home tab screen
+    AgoraScreen.tsx   # Agora tab screen
+App.tsx              # Main app component
 ```
 
 ## Tab Configuration
 
 - **Home Tab**: Uses Home icon from Lucide
 - **Agora Tab**: Uses Video icon from Lucide
-- **Active Color**: #007AFF (iOS blue)
-- **Inactive Color**: #8E8E93 (iOS gray)
+- **Active Color**: Uses centralized color constants
+- **Inactive Color**: Uses centralized color constants
+
+## Color System
+
+The app uses a centralized color system located in `src/constants/colors.ts`:
+
+- **Theme Support**: Automatic dark/light mode switching
+- **Consistent Colors**: All colors defined in one place
+- **Type Safety**: TypeScript support for all color values
+- **Easy Maintenance**: Change colors globally by updating constants
+
+### Key Features
+
+- Primary colors for brand elements
+- Secondary colors for accents
+- Neutral gray scale (50-900)
+- iOS system colors
+- Theme-aware color helpers
+- Tab bar specific colors
 
 ## Running the App
 
