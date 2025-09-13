@@ -1,3 +1,4 @@
 export { default as AppNavigator } from './AppNavigator';
 export { default as TabNavigator } from './TabNavigator';
-export type { RootTabParamList } from './types';
+export { default as DrawerNavigator } from './DrawerNavigator';
+export type { RootTabParamList, RootDrawerParamList } from './types';
