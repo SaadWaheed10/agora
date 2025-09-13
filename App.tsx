@@ -6,17 +6,18 @@
  */
 
 import React from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppNavigator } from './src/navigation';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  // Force dark mode for the entire app
+  const isDarkMode = true;
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="light-content" backgroundColor="#0D1117" />
       <AppNavigator />
     </SafeAreaProvider>
   );

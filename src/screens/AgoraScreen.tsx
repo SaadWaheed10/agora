@@ -1,17 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Video } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
 const AgoraScreen = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  // Force dark mode for consistent theming
+  const isDarkMode = true;
   const themeColors = getThemeColors(isDarkMode);
 
   return (
     <View
       style={[styles.container, { backgroundColor: themeColors.background }]}
     >
-      <Video size={48} color={Colors.secondary} />
+      <View
+        style={[styles.iconContainer, { backgroundColor: themeColors.surface }]}
+      >
+        <Video size={48} color={Colors.secondary} />
+      </View>
       <Text style={[styles.title, { color: themeColors.textPrimary }]}>
         Agora
       </Text>
@@ -27,6 +32,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,

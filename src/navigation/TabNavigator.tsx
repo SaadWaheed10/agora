@@ -1,6 +1,5 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useColorScheme } from 'react-native';
 import { Home, Video } from 'lucide-react-native';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -20,7 +19,8 @@ const VideoIcon = ({ color, size }: { color: string; size: number }) => (
 );
 
 const TabNavigator = () => {
-  const isDarkMode = useColorScheme() === 'dark';
+  // Force dark mode for consistent theming
+  const isDarkMode = true;
   const themeColors = getThemeColors(isDarkMode);
 
   return (
@@ -32,9 +32,12 @@ const TabNavigator = () => {
         tabBarStyle: {
           backgroundColor: themeColors.tabBarBackground,
           borderTopColor: themeColors.tabBarBorder,
+          borderTopWidth: 0.5,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         headerStyle: {
-          backgroundColor: themeColors.cardBackground,
+          backgroundColor: themeColors.surface,
         },
         headerTintColor: themeColors.textPrimary,
       }}

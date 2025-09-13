@@ -9,21 +9,27 @@ This folder contains all app-wide constants including colors, dimensions, and ot
 
 ## Color System
 
-The color system is designed to support both light and dark themes with consistent naming conventions.
+The color system is optimized for a modern dark theme with sophisticated color choices and excellent contrast ratios.
 
 ### Color Categories
 
-#### Primary Colors
+#### Primary Colors - Modern Blue
 
-- `primary`: Main brand color (#007AFF)
-- `primaryDark`: Darker variant for pressed states
-- `primaryLight`: Lighter variant for hover states
+- `primary`: Main brand color (#0A84FF) - Bright, modern blue
+- `primaryDark`: Darker variant for pressed states (#0056CC)
+- `primaryLight`: Lighter variant for hover states (#4A9EFF)
 
-#### Secondary Colors
+#### Secondary Colors - Vibrant Purple
 
-- `secondary`: Secondary brand color (#FF6B6B)
-- `secondaryDark`: Darker variant
-- `secondaryLight`: Lighter variant
+- `secondary`: Secondary brand color (#AF52DE) - Vibrant purple
+- `secondaryDark`: Darker variant (#8E44AD)
+- `secondaryLight`: Lighter variant (#C77DFF)
+
+#### Accent Colors
+
+- `accent`: Accent color (#FF9500) - Orange for highlights
+- `accentDark`: Darker variant (#E6850E)
+- `accentLight`: Lighter variant (#FFB84D)
 
 #### Neutral Colors
 
@@ -38,20 +44,34 @@ The color system is designed to support both light and dark themes with consiste
 - `ios.darkGray`: iOS dark gray
 - `ios.darkerGray`: iOS darker gray
 
-#### Theme-Aware Colors
+#### Dark Theme Colors
 
-- `background`: Main background color
-- `card`: Card/container background
-- `text.primary`: Primary text color
-- `text.secondary`: Secondary text color
-- `text.tertiary`: Tertiary text color
+- `dark.background`: Main dark background (#0D1117) - Almost black with blue tint
+- `dark.surface`: Card/surface background (#161B22) - Slightly lighter
+- `dark.surfaceVariant`: Surface variant (#21262D) - For cards/containers
+- `dark.border`: Subtle borders (#30363D)
+- `dark.borderLight`: Lighter borders (#21262D)
 
-#### Tab Bar Colors
+#### Text Colors - High Contrast
 
-- `tabBar.background`: Tab bar background
-- `tabBar.border`: Tab bar border
-- `tabBar.active`: Active tab color
-- `tabBar.inactive`: Inactive tab color
+- `text.primary`: Primary text (#F0F6FC) - High contrast white
+- `text.secondary`: Secondary text (#8B949E) - Muted gray
+- `text.tertiary`: Tertiary text (#6E7681) - More muted
+- `text.inverse`: Inverse text (#0D1117) - Dark text on light backgrounds
+
+#### Tab Bar Colors - Dark Optimized
+
+- `tabBar.background`: Dark surface background
+- `tabBar.border`: Subtle border color
+- `tabBar.active`: Bright blue for active state
+- `tabBar.inactive`: Muted gray for inactive state
+
+#### Semantic Colors
+
+- `success`: Success color (#28A745)
+- `warning`: Warning color (#FFC107)
+- `error`: Error color (#DC3545)
+- `info`: Info color (#17A2B8)
 
 ## Usage
 
