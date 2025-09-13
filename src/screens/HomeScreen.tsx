@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Home } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
@@ -9,8 +10,9 @@ const HomeScreen = () => {
   const themeColors = getThemeColors(isDarkMode);
 
   return (
-    <View
+    <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
+      edges={['top']}
     >
       <View
         style={[styles.iconContainer, { backgroundColor: themeColors.surface }]}
@@ -23,7 +25,7 @@ const HomeScreen = () => {
       <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
         Welcome to your home screen
       </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import { StatusBar } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar, Platform } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppNavigator } from './src/navigation';
 
@@ -17,8 +17,14 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle="light-content" backgroundColor="#0D1117" />
-      <AppNavigator />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#0D1117"
+        translucent={Platform.OS === 'android'}
+      />
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#0D1117' }}>
+        <AppNavigator />
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }

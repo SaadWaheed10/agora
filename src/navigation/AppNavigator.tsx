@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import DrawerNavigator from './DrawerNavigator';
+import CombinedNavigator from './CombinedNavigator';
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <DrawerNavigator />
+      <CombinedNavigator />
     </NavigationContainer>
   );
 };

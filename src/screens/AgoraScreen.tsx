@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Video } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
@@ -9,8 +10,9 @@ const AgoraScreen = () => {
   const themeColors = getThemeColors(isDarkMode);
 
   return (
-    <View
+    <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
+      edges={['top']}
     >
       <View
         style={[styles.iconContainer, { backgroundColor: themeColors.surface }]}
@@ -23,7 +25,7 @@ const AgoraScreen = () => {
       <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
         Video calling and live streaming
       </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

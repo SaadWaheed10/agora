@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Radio,
   Users,
@@ -24,77 +25,94 @@ const LiveStreamScreen = () => {
   const themeColors = getThemeColors(isDarkMode);
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
+      edges={['top']}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-          Live Stream
-        </Text>
-        <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-          Start your live streaming session
-        </Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Radio size={32} color={Colors.primary} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Stream Settings
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Configure your live stream quality and settings
-        </Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Users size={32} color={Colors.secondary} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Audience
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Manage your live stream audience and interactions
-        </Text>
-      </View>
-
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: Colors.primary }]}
-        >
-          <Mic size={24} color={Colors.white} />
-          <Text style={styles.controlButtonText}>Start Stream</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.controlButton,
-            {
-              backgroundColor: themeColors.surface,
-              borderColor: Colors.primary,
-              borderWidth: 1,
-            },
-          ]}
-        >
-          <Settings size={24} color={Colors.primary} />
-          <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
-            Settings
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
+            Live Stream
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
+            Start your live streaming session
+          </Text>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
+          <View style={styles.iconContainer}>
+            <Radio size={32} color={Colors.primary} />
+          </View>
+          <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
+            Stream Settings
+          </Text>
+          <Text
+            style={[
+              styles.cardDescription,
+              { color: themeColors.textSecondary },
+            ]}
+          >
+            Configure your live stream quality and settings
+          </Text>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
+          <View style={styles.iconContainer}>
+            <Users size={32} color={Colors.secondary} />
+          </View>
+          <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
+            Audience
+          </Text>
+          <Text
+            style={[
+              styles.cardDescription,
+              { color: themeColors.textSecondary },
+            ]}
+          >
+            Manage your live stream audience and interactions
+          </Text>
+        </View>
+
+        <View style={styles.controlsContainer}>
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: Colors.primary }]}
+          >
+            <Mic size={24} color={Colors.white} />
+            <Text style={styles.controlButtonText}>Start Stream</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.controlButton,
+              {
+                backgroundColor: themeColors.surface,
+                borderColor: Colors.primary,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <Settings size={24} color={Colors.primary} />
+            <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
+              Settings
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     padding: 20,
   },
   header: {
