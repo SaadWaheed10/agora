@@ -7,16 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  Radio,
-  Users,
-  Settings,
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  Phone,
-} from 'lucide-react-native';
+import { Radio, Users, Settings, Mic } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
 const LiveStreamScreen = () => {
@@ -87,10 +78,10 @@ const LiveStreamScreen = () => {
           <TouchableOpacity
             style={[
               styles.controlButton,
+              styles.controlButtonWithBorder,
               {
                 backgroundColor: themeColors.surface,
                 borderColor: Colors.primary,
-                borderWidth: 1,
               },
             ]}
           >
@@ -164,6 +155,9 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     gap: 8,
+  },
+  controlButtonWithBorder: {
+    borderWidth: 1,
   },
   controlButtonText: {
     color: Colors.white,
