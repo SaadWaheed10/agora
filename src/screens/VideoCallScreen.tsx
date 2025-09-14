@@ -6,16 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Phone,
-  Users,
-  Settings,
-  Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  PhoneCall,
-} from 'lucide-react-native';
+import { Phone, Users, Settings, PhoneCall } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
 const VideoCallScreen = () => {
@@ -47,20 +38,6 @@ const VideoCallScreen = () => {
           style={[styles.cardDescription, { color: themeColors.textSecondary }]}
         >
           Create a new video call room
-        </Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Users size={32} color={Colors.secondary} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Join Call
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Enter a room ID to join an existing call
         </Text>
       </View>
 
@@ -101,6 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingTop: 70,
   },
   header: {
     marginBottom: 30,

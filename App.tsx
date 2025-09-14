@@ -7,14 +7,11 @@
 
 import React from 'react';
 import { StatusBar, Platform } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppNavigator } from './src/navigation';
 
 function App() {
-  // Force dark mode for the entire app
-  const isDarkMode = true;
-
   return (
     <SafeAreaProvider>
       <StatusBar
@@ -22,9 +19,7 @@ function App() {
         backgroundColor="#0D1117"
         translucent={Platform.OS === 'android'}
       />
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#0D1117' }}>
-        <AppNavigator />
-      </SafeAreaView>
+      <AppNavigator />
     </SafeAreaProvider>
   );
 }

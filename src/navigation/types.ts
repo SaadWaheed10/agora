@@ -11,4 +11,5 @@ export type RootDrawerParamList = {
   AudioCall: undefined;
   ScreenShare: undefined;
   Settings: undefined;
+  MainTabs: undefined;
 };

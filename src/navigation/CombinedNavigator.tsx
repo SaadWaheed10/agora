@@ -9,7 +9,6 @@ import {
   Phone,
   Monitor,
   Settings,
-  Menu,
 } from 'lucide-react-native';
 
 // Import screens
@@ -53,7 +52,7 @@ const TabNavigator = () => {
           borderTopWidth: 0.5,
           elevation: 0,
           shadowOpacity: 0,
-          height: 60,
+          height: 75,
           paddingBottom: 8,
           paddingTop: 8,
         },
@@ -175,13 +174,17 @@ const CustomDrawerContent = (props: any) => {
 };
 
 // Main Drawer Navigator
+function drawerContent(props: any) {
+  return <CustomDrawerContent {...props} />;
+}
+
 const DrawerNavigator = () => {
   const isDarkMode = true;
   const themeColors = getThemeColors(isDarkMode);
 
   return (
     <Drawer.Navigator
-      drawerContent={props => <CustomDrawerContent {...props} />}
+      drawerContent={drawerContent}
       screenOptions={{
         headerShown: false,
         drawerStyle: {

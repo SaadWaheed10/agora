@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { Monitor, Share2, Users, Settings } from 'lucide-react-native';
+import { Monitor, Settings } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
 const ScreenShareScreen = () => {
@@ -41,34 +41,6 @@ const ScreenShareScreen = () => {
         </Text>
       </View>
 
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Share2 size={32} color={Colors.secondary} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Share Content
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Share specific files, documents, or media
-        </Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Users size={32} color={Colors.accent} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Audience Control
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Manage who can see your shared content
-        </Text>
-      </View>
-
       <View style={styles.controlsContainer}>
         <TouchableOpacity
           style={[styles.controlButton, { backgroundColor: Colors.primary }]}
@@ -80,10 +52,10 @@ const ScreenShareScreen = () => {
         <TouchableOpacity
           style={[
             styles.controlButton,
+            styles.controlButtonWithBorder,
             {
               backgroundColor: themeColors.surface,
               borderColor: Colors.primary,
-              borderWidth: 1,
             },
           ]}
         >
@@ -101,6 +73,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingTop: 70,
   },
   header: {
     marginBottom: 30,
@@ -156,6 +129,9 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     fontWeight: '600',
+  },
+  controlButtonWithBorder: {
+    borderWidth: 1,
   },
 });
 

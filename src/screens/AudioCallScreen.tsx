@@ -6,14 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Phone,
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
-  Settings,
-} from 'lucide-react-native';
+import { Phone, Mic, Settings } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 
 const AudioCallScreen = () => {
@@ -73,10 +66,10 @@ const AudioCallScreen = () => {
         <TouchableOpacity
           style={[
             styles.controlButton,
+            styles.controlButtonBorder,
             {
               backgroundColor: themeColors.surface,
               borderColor: Colors.primary,
-              borderWidth: 1,
             },
           ]}
         >
@@ -94,6 +87,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingTop: 70,
   },
   header: {
     marginBottom: 30,
@@ -149,6 +143,9 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 16,
     fontWeight: '600',
+  },
+  controlButtonBorder: {
+    borderWidth: 1,
   },
 });
 
