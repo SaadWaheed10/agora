@@ -1,140 +1,268 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import { Phone, Users, Settings, PhoneCall } from 'lucide-react-native';
-import { Colors, getThemeColors } from '../constants';
+  Phone,
+  PhoneOff,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Camera,
+  Users,
+  PhoneCall,
+} from 'lucide-react-native';
+import { RtcSurfaceView, VideoSourceType } from 'react-native-agora';
+import Colors, { getThemeColors } from '../constants/colors';
+import { useAgoraVideoCall } from '../hooks/useAgoraVideoCall';
 
 const VideoCallScreen = () => {
-  // Force dark mode for consistent theming
   const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
+  const theme = getThemeColors(isDarkMode);
+
+  const [channelName] = useState('video-call-room-123'); // Can be dynamic
+  const {
+    isJoined,
+    remoteUid,
+    isMuted,
+    isVideoEnabled,
+    joinCall,
+    leaveCall,
+    toggleMute,
+    toggleVideo,
+    switchCamera,
+  } = useAgoraVideoCall(channelName);
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: themeColors.background }]}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-          Video Call
-        </Text>
-        <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-          Start or join a video call
-        </Text>
+      {/* Video Area */}
+      <View style={styles.videoContainer}>
+        {/* Remote Video (Full Screen) */}
+        {isJoined && remoteUid ? (
+          <RtcSurfaceView
+            style={StyleSheet.absoluteFill}
+            canvas={{ uid: remoteUid }}
+            zOrderMediaOverlay={false}
+          />
+        ) : (
+          <View style={styles.placeholder}>
+            <Users size={60} color={theme.textSecondary} />
+            <Text
+              style={[styles.placeholderText, { color: theme.textSecondary }]}
+            >
+              {isJoined
+                ? 'Waiting for someone to join...'
+                : 'Start a video call'}
+            </Text>
+          </View>
+        )}
+
+        {/* Local Video (Small PiP) */}
+        {isJoined && (
+          <View style={styles.localVideo}>
+            <RtcSurfaceView
+              style={StyleSheet.absoluteFill}
+              canvas={{ sourceType: VideoSourceType.VideoSourceCamera }}
+            />
+          </View>
+        )}
       </View>
 
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <PhoneCall size={32} color={Colors.primary} />
+      {/* Call Controls */}
+      {isJoined ? (
+        <View style={styles.callControls}>
+          <TouchableOpacity
+            style={[styles.fab, isMuted && styles.muted]}
+            onPress={toggleMute}
+          >
+            {isMuted ? (
+              <MicOff size={28} color={Colors.white} />
+            ) : (
+              <Mic size={28} color={Colors.white} />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.fab, !isVideoEnabled && styles.muted]}
+            onPress={toggleVideo}
+          >
+            {isVideoEnabled ? (
+              <Video size={28} color={Colors.white} />
+            ) : (
+              <VideoOff size={28} color={Colors.white} />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.fab, styles.endCall]}
+            onPress={leaveCall}
+          >
+            <PhoneOff size={32} color={Colors.white} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.fab} onPress={switchCamera}>
+            <Camera size={28} color={Colors.white} />
+          </TouchableOpacity>
         </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Start Call
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Create a new video call room
-        </Text>
-      </View>
+      ) : (
+        <>
+          {/* Start/Join Section */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.textPrimary }]}>
+              Video Call
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+              High-quality 1-on-1 or group calls
+            </Text>
+          </View>
 
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Settings size={32} color={Colors.accent} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Call Settings
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Configure video quality, audio settings, and more
-        </Text>
-      </View>
+          <View style={[styles.card, { backgroundColor: theme.surface }]}>
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: Colors.highlight },
+              ]}
+            >
+              <PhoneCall size={36} color={Colors.primary} />
+            </View>
+            <Text style={[styles.cardTitle, { color: theme.textPrimary }]}>
+              Ready to Connect
+            </Text>
+            <Text
+              style={[styles.cardDescription, { color: theme.textSecondary }]}
+            >
+              Join or create a call instantly
+            </Text>
+          </View>
 
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: Colors.primary }]}
-        >
-          <Phone size={24} color={Colors.white} />
-          <Text style={styles.controlButtonText}>Start New Call</Text>
-        </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: Colors.primary }]}
+              onPress={joinCall}
+            >
+              <Phone size={24} color={Colors.white} />
+              <Text style={styles.buttonText}>Start Call</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: Colors.secondary }]}
-        >
-          <Users size={24} color={Colors.white} />
-          <Text style={styles.controlButtonText}>Join Call</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+            {/* <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { backgroundColor: Colors.secondary },
+              ]}
+              onPress={() =>
+                Alert.alert('Join Call', 'Enter room code to join')
+              }
+            >
+              <Users size={24} color={Colors.white} />
+              <Text style={styles.buttonText}>Join Call</Text>
+            </TouchableOpacity> */}
+          </View>
+
+          {/* <TouchableOpacity
+            style={[styles.settingsButton, { borderColor: Colors.primary }]}
+          >
+            <Settings size={24} color={Colors.primary} />
+            <Text style={[styles.settingsText, { color: Colors.primary }]}>
+              Call Settings
+            </Text>
+          </TouchableOpacity> */}
+        </>
+      )}
+    </SafeAreaView>
   );
 };
 
+export default VideoCallScreen;
+
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1 },
+  videoContainer: {
     flex: 1,
-    padding: 20,
-    paddingTop: 70,
+    position: 'relative',
   },
-  header: {
-    marginBottom: 30,
+  placeholder: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.dark.surfaceVariant,
+    width: '90%',
+    alignSelf: 'center',
+    borderRadius: 16,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  placeholderText: { marginTop: 20, fontSize: 18 },
+  localVideo: {
+    position: 'absolute',
+    top: 20,
+    right: 30,
+    width: 120,
+    height: 160,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: Colors.primary,
+    elevation: 10,
   },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+  callControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    paddingVertical: 30,
+    backgroundColor: 'rgba(13,17,23,0.9)',
   },
+  fab: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: Colors.gray[800],
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+  },
+  muted: { backgroundColor: Colors.error },
+  endCall: { backgroundColor: Colors.error },
+  header: { alignItems: 'center', padding: 30 },
+  title: { fontSize: 34, fontWeight: '800' },
+  subtitle: { fontSize: 16, marginTop: 8 },
   card: {
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
+    marginHorizontal: 20,
+    padding: 28,
+    borderRadius: 20,
     alignItems: 'center',
+    elevation: 6,
   },
   iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(10, 132, 255, 0.1)',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  controlsContainer: {
-    marginTop: 20,
+  cardTitle: { fontSize: 22, fontWeight: '700' },
+  cardDescription: { fontSize: 15, textAlign: 'center', marginTop: 8 },
+  buttonContainer: { paddingHorizontal: 20, marginTop: 30, gap: 16 },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
+    borderRadius: 16,
     gap: 12,
+    elevation: 8,
   },
-  controlButton: {
+  buttonText: { color: Colors.white, fontSize: 18, fontWeight: '700' },
+  settingsButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    borderRadius: 12,
-    gap: 8,
+    borderWidth: 2,
+    borderRadius: 16,
+    marginTop: 16,
+    marginHorizontal: 20,
+    gap: 10,
   },
-  controlButtonText: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
+  settingsText: { fontSize: 16, fontWeight: '600' },
 });
-
-export default VideoCallScreen;
