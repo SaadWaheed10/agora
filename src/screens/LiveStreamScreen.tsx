@@ -1,169 +1,265 @@
+// LiveStreamScreen.tsx
 import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Radio, Users, Settings, Mic } from 'lucide-react-native';
-import { Colors, getThemeColors } from '../constants';
+import {
+  Radio,
+  Settings,
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  PhoneOff,
+} from 'lucide-react-native';
+import { RtcSurfaceView, VideoSourceType } from 'react-native-agora';
+import Colors, { getThemeColors } from '../constants/colors';
+import { useAgoraLiveStream } from '../hooks/useAgoraLiveStream';
+
+const { width } = Dimensions.get('window');
 
 const LiveStreamScreen = () => {
-  // Force dark mode for consistent theming
   const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
+  const theme = getThemeColors(isDarkMode);
+
+  const {
+    isJoined,
+    isMuted,
+    isVideoEnabled,
+    startStream,
+    endStream,
+    toggleMute,
+    toggleVideo,
+  } = useAgoraLiveStream();
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: themeColors.background }]}
-      edges={['top']}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-            Live Stream
-          </Text>
-          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-            Start your live streaming session
-          </Text>
-        </View>
-
-        <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-          <View style={styles.iconContainer}>
-            <Radio size={32} color={Colors.primary} />
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: theme.textPrimary }]}>
+          {isJoined ? 'LIVE NOW' : 'Go Live'}
+        </Text>
+        {isJoined && (
+          <View style={styles.liveBadge}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>LIVE</Text>
           </View>
-          <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-            Stream Settings
-          </Text>
-          <Text
-            style={[
-              styles.cardDescription,
-              { color: themeColors.textSecondary },
-            ]}
-          >
-            Configure your live stream quality and settings
-          </Text>
-        </View>
+        )}
+      </View>
 
-        <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-          <View style={styles.iconContainer}>
-            <Users size={32} color={Colors.secondary} />
+      {/* Video Preview */}
+      <View style={styles.videoContainer}>
+        {isJoined ? (
+          <RtcSurfaceView
+            style={StyleSheet.absoluteFill}
+            canvas={{ sourceType: VideoSourceType.VideoSourceCamera }}
+          />
+        ) : (
+          <View style={styles.placeholder}>
+            <Radio size={80} color={theme.textSecondary} />
+            <Text
+              style={[styles.placeholderText, { color: theme.textSecondary }]}
+            >
+              Ready to broadcast
+            </Text>
           </View>
-          <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-            Audience
-          </Text>
-          <Text
-            style={[
-              styles.cardDescription,
-              { color: themeColors.textSecondary },
-            ]}
-          >
-            Manage your live stream audience and interactions
-          </Text>
-        </View>
+        )}
+      </View>
 
-        <View style={styles.controlsContainer}>
+      {/* Info Card */}
+      <View style={[styles.card, { backgroundColor: theme.surface }]}>
+        <View
+          style={[styles.iconContainer, { backgroundColor: Colors.highlight }]}
+        >
+          <Radio size={32} color={Colors.primary} />
+        </View>
+        <Text style={[styles.cardTitle, { color: theme.textPrimary }]}>
+          {isJoined ? 'Streaming Active' : 'Live Stream Ready'}
+        </Text>
+        <Text style={[styles.cardDescription, { color: theme.textSecondary }]}>
+          {isJoined ? 'Channel: mylivestream' : 'Tap Start to go live'}
+        </Text>
+      </View>
+
+      {/* Controls */}
+      <View style={styles.controlsContainer}>
+        {!isJoined ? (
           <TouchableOpacity
             style={[styles.controlButton, { backgroundColor: Colors.primary }]}
+            onPress={startStream}
           >
             <Mic size={24} color={Colors.white} />
-            <Text style={styles.controlButtonText}>Start Stream</Text>
+            <Text style={styles.controlButtonText}>Start Streaming</Text>
           </TouchableOpacity>
+        ) : (
+          <View style={styles.hostControls}>
+            <TouchableOpacity
+              style={[styles.smallBtn, isMuted && styles.muted]}
+              onPress={toggleMute}
+            >
+              {isMuted ? (
+                <MicOff size={24} color={Colors.white} />
+              ) : (
+                <Mic size={24} color={Colors.white} />
+              )}
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.controlButton,
-              styles.controlButtonWithBorder,
-              {
-                backgroundColor: themeColors.surface,
-                borderColor: Colors.primary,
-              },
-            ]}
-          >
-            <Settings size={24} color={Colors.primary} />
-            <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
-              Settings
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <TouchableOpacity
+              style={[styles.smallBtn, !isVideoEnabled && styles.muted]}
+              onPress={toggleVideo}
+            >
+              {isVideoEnabled ? (
+                <Video size={24} color={Colors.white} />
+              ) : (
+                <VideoOff size={24} color={Colors.white} />
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.smallBtn, styles.endBtn]}
+              onPress={endStream}
+            >
+              <PhoneOff size={24} color={Colors.white} />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={[
+            styles.controlButton,
+            styles.borderBtn,
+            {
+              backgroundColor: theme.surface,
+              borderColor: Colors.primary,
+            },
+          ]}
+        >
+          <Settings size={24} color={Colors.primary} />
+          <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
+            Settings
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
+export default LiveStreamScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  header: {
-    marginBottom: 30,
+  container: { flex: 1 },
+  header: { alignItems: 'center', paddingVertical: 24 },
+  title: { fontSize: 34, fontWeight: '800' },
+  liveBadge: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: Colors.error,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 12,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  liveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.white,
+    marginRight: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+  liveText: { color: Colors.white, fontWeight: 'bold', fontSize: 14 },
+  videoContainer: {
+    width: width * 0.9,
+    height: width * 0.5,
+    backgroundColor: Colors.black,
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 24,
+    alignSelf: 'center',
+    elevation: 10,
+    shadowColor: Colors.dark.shadow,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
   },
+  placeholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.dark.surfaceVariant,
+  },
+  placeholderText: { marginTop: 16, fontSize: 16 },
   card: {
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 16,
+    marginHorizontal: 20,
+    padding: 24,
+    borderRadius: 16,
     alignItems: 'center',
+    elevation: 4,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(10, 132, 255, 0.1)',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  controlsContainer: {
-    marginTop: 20,
-    gap: 12,
-  },
+  cardTitle: { fontSize: 22, fontWeight: '700', marginBottom: 8 },
+  cardDescription: { fontSize: 15, lineHeight: 22 },
+  controlsContainer: { paddingHorizontal: 20, paddingBottom: 40 },
   controlButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    borderRadius: 12,
-    gap: 8,
+    paddingVertical: 18,
+    borderRadius: 16,
+    gap: 12,
+    elevation: 6,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    marginTop: 20,
   },
-  controlButtonWithBorder: {
-    borderWidth: 1,
+  borderBtn: {
+    borderWidth: 2,
+    marginTop: 16,
   },
   controlButtonText: {
+    fontSize: 17,
+    fontWeight: '700',
     color: Colors.white,
-    fontSize: 16,
-    fontWeight: '600',
   },
+  hostControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 24,
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  smallBtn: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: Colors.gray[800],
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+  },
+  muted: { backgroundColor: Colors.error },
+  endBtn: { backgroundColor: Colors.error },
 });
-
-export default LiveStreamScreen;
