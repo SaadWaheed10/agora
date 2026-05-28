@@ -1,26 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { Alert, Platform } from 'react-native';
-import {
-  createAgoraRtcEngine,
-  ChannelProfileType,
-  ClientRoleType,
-} from 'react-native-agora';
-import { appId, TOKEN as token } from '../constants/agoraConstants';
-
-const channelName = 'screen-share-room';
+import { ClientRoleType } from 'react-native-agora';
+import { createRtcEngine } from '../agora/createRtcEngine';
+import { AGORA_CHANNELS } from '../constants/channelNames';
+import { TOKEN as token } from '../constants/agoraConstants';
 
 export const useAgoraScreenShare = () => {
+  const channelName = AGORA_CHANNELS.SCREEN_SHARE;
   const [isSharing, setIsSharing] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
-  const engineRef = useRef<ReturnType<typeof createAgoraRtcEngine> | null>(null);
+  const engineRef = useRef<ReturnType<typeof createRtcEngine> | null>(null);
 
   useEffect(() => {
-    const engine = createAgoraRtcEngine();
+    const engine = createRtcEngine('liveBroadcasting');
     engineRef.current = engine;
-
-    engine.initialize({ appId });
-    engine.setChannelProfile(ChannelProfileType.ChannelProfileLiveBroadcasting);
     engine.setClientRole(ClientRoleType.ClientRoleBroadcaster);
     engine.enableAudio();
     engine.enableVideo();
@@ -42,8 +36,8 @@ export const useAgoraScreenShare = () => {
   const startShare = async () => {
     if (Platform.OS !== 'android') {
       Alert.alert(
-        'Not supported',
-        'In-app screen sharing is available on Android. Use a video call on iOS.',
+        'iOS screen share',
+        'In-app screen capture on iOS requires a Broadcast Extension. This demo implements Android screen capture via startScreenCapture + publishScreenTrack.',
       );
       return;
     }
@@ -84,5 +78,5 @@ export const useAgoraScreenShare = () => {
     setIsMuted(next);
   };
 
-  return { isSharing, isMuted, startShare, stopShare, toggleMute };
+  return { channelName, isSharing, isMuted, startShare, stopShare, toggleMute };
 };

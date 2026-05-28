@@ -11,15 +11,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Radio,
   Mic,
-  MicOff,
-  Video,
-  VideoOff,
-  PhoneOff,
 } from 'lucide-react-native';
 import { RtcSurfaceView, VideoSourceType } from 'react-native-agora';
 import Colors, { getThemeColors } from '../constants/colors';
 import { useAgoraLiveStream } from '../hooks/useAgoraLiveStream';
 import { ensureFeaturePermissions } from '../hooks/usePermission';
+import { DemoBanner } from '../components/agora/DemoBanner';
+import { CallControls } from '../components/agora/CallControls';
+import { AGORA_FEATURES } from '../constants/agoraFeatures';
+
+const meta = AGORA_FEATURES.find(f => f.route === 'LiveStream')!;
 
 const { width } = Dimensions.get('window');
 
@@ -28,6 +29,7 @@ const LiveStreamScreen = () => {
   const theme = getThemeColors(isDarkMode);
 
   const {
+    channelName,
     isJoined,
     isMuted,
     isVideoEnabled,
@@ -35,13 +37,21 @@ const LiveStreamScreen = () => {
     endStream,
     toggleMute,
     toggleVideo,
+    switchCamera,
   } = useAgoraLiveStream();
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      {/* Header */}
+      {!isJoined && (
+        <DemoBanner
+          channel={channelName}
+          sdkFeature={meta.sdkFeature}
+          testHint={meta.testHint}
+        />
+      )}
+
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.textPrimary }]}>
           {isJoined ? 'LIVE NOW' : 'Go Live'}
@@ -84,7 +94,7 @@ const LiveStreamScreen = () => {
           {isJoined ? 'Streaming Active' : 'Live Stream Ready'}
         </Text>
         <Text style={[styles.cardDescription, { color: theme.textSecondary }]}>
-          {isJoined ? 'Channel: mylivestream' : 'Tap Start to go live'}
+          {isJoined ? `Channel: ${channelName}` : 'Tap Start to go live'}
         </Text>
       </View>
 
@@ -103,36 +113,14 @@ const LiveStreamScreen = () => {
             <Text style={styles.controlButtonText}>Start Streaming</Text>
           </TouchableOpacity>
         ) : (
-          <View style={styles.hostControls}>
-            <TouchableOpacity
-              style={[styles.smallBtn, isMuted && styles.muted]}
-              onPress={toggleMute}
-            >
-              {isMuted ? (
-                <MicOff size={24} color={Colors.white} />
-              ) : (
-                <Mic size={24} color={Colors.white} />
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.smallBtn, !isVideoEnabled && styles.muted]}
-              onPress={toggleVideo}
-            >
-              {isVideoEnabled ? (
-                <Video size={24} color={Colors.white} />
-              ) : (
-                <VideoOff size={24} color={Colors.white} />
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.smallBtn, styles.endBtn]}
-              onPress={endStream}
-            >
-              <PhoneOff size={24} color={Colors.white} />
-            </TouchableOpacity>
-          </View>
+          <CallControls
+            isMuted={isMuted}
+            isVideoEnabled={isVideoEnabled}
+            onToggleMute={toggleMute}
+            onToggleVideo={toggleVideo}
+            onSwitchCamera={switchCamera}
+            onEnd={endStream}
+          />
         )}
       </View>
     </SafeAreaView>
@@ -224,26 +212,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.white,
   },
-  hostControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 24,
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  smallBtn: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: Colors.gray[800],
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-  },
-  muted: { backgroundColor: Colors.error },
-  endBtn: { backgroundColor: Colors.error },
 });

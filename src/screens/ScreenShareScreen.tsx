@@ -12,11 +12,14 @@ import { Monitor, Mic, MicOff, PhoneOff } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 import { useAgoraScreenShare } from '../hooks/useAgoraScreenShare';
 import { ensureFeaturePermissions } from '../hooks/usePermission';
+import { DemoBanner } from '../components/agora/DemoBanner';
+import { AGORA_FEATURES } from '../constants/agoraFeatures';
+
+const meta = AGORA_FEATURES.find(f => f.route === 'ScreenShare')!;
 
 const ScreenShareScreen = () => {
-  const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
-  const { isSharing, isMuted, startShare, stopShare, toggleMute } =
+  const themeColors = getThemeColors(true);
+  const { channelName, isSharing, isMuted, startShare, stopShare, toggleMute } =
     useAgoraScreenShare();
 
   const handleStart = async () => {
@@ -30,6 +33,11 @@ const ScreenShareScreen = () => {
       style={[styles.container, { backgroundColor: themeColors.background }]}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <DemoBanner
+          channel={channelName}
+          sdkFeature={meta.sdkFeature}
+          testHint={meta.testHint}
+        />
         <View style={styles.header}>
           <Text style={[styles.title, { color: themeColors.textPrimary }]}>
             Screen Share

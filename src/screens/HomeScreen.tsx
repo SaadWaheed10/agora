@@ -9,65 +9,25 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
-import {
-  Home,
-  Video,
-  Radio,
-  Phone,
-  Monitor,
-  Menu,
-  ChevronRight,
-  PanelLeftOpen,
-} from 'lucide-react-native';
+import { Menu, ChevronRight, PanelLeftOpen } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 import type { RootDrawerParamList } from '../navigation/types';
+import {
+  AGORA_FEATURES,
+  AGORA_FEATURE_CATEGORIES,
+  type AgoraFeatureCategory,
+} from '../constants/agoraFeatures';
 
 type HomeNavigationProp = DrawerNavigationProp<RootDrawerParamList, 'Home'>;
-
-type FeatureItem = {
-  route: keyof RootDrawerParamList;
-  title: string;
-  description: string;
-  icon: typeof Home;
-  color: string;
-};
-
-const FEATURES: FeatureItem[] = [
-  {
-    route: 'LiveStream',
-    title: 'Live Stream',
-    description: 'Broadcast to your audience',
-    icon: Radio,
-    color: Colors.primary,
-  },
-  {
-    route: 'VideoCall',
-    title: 'Video Call',
-    description: '1-on-1 or group video',
-    icon: Video,
-    color: Colors.primary,
-  },
-  {
-    route: 'AudioCall',
-    title: 'Audio Call',
-    description: 'Audio-only conversations',
-    icon: Phone,
-    color: Colors.accent,
-  },
-  {
-    route: 'ScreenShare',
-    title: 'Screen Share',
-    description: 'Share your screen (Android)',
-    icon: Monitor,
-    color: Colors.primaryLight,
-  },
-];
 
 const HomeScreen = () => {
   const themeColors = getThemeColors(true);
   const navigation = useNavigation<HomeNavigationProp>();
 
   const openDrawer = () => navigation.openDrawer();
+
+  const byCategory = (cat: AgoraFeatureCategory) =>
+    AGORA_FEATURES.filter(f => f.category === cat);
 
   return (
     <SafeAreaView
@@ -78,19 +38,17 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={[styles.menuButton, { backgroundColor: themeColors.surface }]}
           onPress={openDrawer}
-          accessibilityRole="button"
-          accessibilityLabel="Open navigation menu"
         >
           <Menu size={24} color={Colors.primary} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={[styles.headerTitle, { color: themeColors.textPrimary }]}>
-            Agora
+            Agora Showcase
           </Text>
           <Text
             style={[styles.headerSubtitle, { color: themeColors.textSecondary }]}
           >
-            Home
+            react-native-agora demos for the RN community
           </Text>
         </View>
       </View>
@@ -98,22 +56,11 @@ const HomeScreen = () => {
       <TouchableOpacity
         style={[styles.drawerHint, { backgroundColor: themeColors.surface }]}
         onPress={openDrawer}
-        activeOpacity={0.85}
       >
         <PanelLeftOpen size={20} color={Colors.primary} />
-        <View style={styles.drawerHintText}>
-          <Text style={[styles.drawerHintTitle, { color: themeColors.textPrimary }]}>
-            Side menu available
-          </Text>
-          <Text
-            style={[
-              styles.drawerHintSubtitle,
-              { color: themeColors.textSecondary },
-            ]}
-          >
-            Tap here or swipe from the left edge to open all features
-          </Text>
-        </View>
+        <Text style={[styles.drawerHintText, { color: themeColors.textSecondary }]}>
+          Swipe from the left or tap menu for all demos
+        </Text>
         <ChevronRight size={20} color={themeColors.textSecondary} />
       </TouchableOpacity>
 
@@ -122,63 +69,56 @@ const HomeScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.welcomeBlock}>
-          <View
-            style={[
-              styles.iconContainer,
-              { backgroundColor: themeColors.surface },
-            ]}
-          >
-            <Home size={40} color={Colors.primary} />
-          </View>
-          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-            Welcome
-          </Text>
-          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-            Pick a feature below to get started
-          </Text>
-        </View>
-
-        <Text style={[styles.sectionLabel, { color: themeColors.textSecondary }]}>
-          FEATURES
-        </Text>
-
-        {FEATURES.map(item => {
-          const Icon = item.icon;
-          return (
-            <TouchableOpacity
-              key={item.route}
-              style={[styles.featureCard, { backgroundColor: themeColors.surface }]}
-              onPress={() => navigation.navigate(item.route)}
-              activeOpacity={0.8}
+        {AGORA_FEATURE_CATEGORIES.map(category => (
+          <View key={category}>
+            <Text
+              style={[styles.sectionLabel, { color: themeColors.textSecondary }]}
             >
-              <View
-                style={[
-                  styles.featureIcon,
-                  { backgroundColor: `${item.color}22` },
-                ]}
-              >
-                <Icon size={26} color={item.color} />
-              </View>
-              <View style={styles.featureContent}>
-                <Text
-                  style={[styles.featureTitle, { color: themeColors.textPrimary }]}
-                >
-                  {item.title}
-                </Text>
-                <Text
+              {category.toUpperCase()}
+            </Text>
+            {byCategory(category).map(item => {
+              const Icon = item.icon;
+              return (
+                <TouchableOpacity
+                  key={item.route}
                   style={[
-                    styles.featureDescription,
-                    { color: themeColors.textSecondary },
+                    styles.featureCard,
+                    { backgroundColor: themeColors.surface },
                   ]}
+                  onPress={() => navigation.navigate(item.route)}
                 >
-                  {item.description}
-                </Text>
-              </View>
-              <ChevronRight size={22} color={themeColors.textSecondary} />
-            </TouchableOpacity>
-          );
-        })}
+                  <View
+                    style={[
+                      styles.featureIcon,
+                      { backgroundColor: `${item.color}22` },
+                    ]}
+                  >
+                    <Icon size={26} color={item.color} />
+                  </View>
+                  <View style={styles.featureContent}>
+                    <Text
+                      style={[
+                        styles.featureTitle,
+                        { color: themeColors.textPrimary },
+                      ]}
+                    >
+                      {item.title}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.featureDescription,
+                        { color: themeColors.textSecondary },
+                      ]}
+                    >
+                      {item.description}
+                    </Text>
+                  </View>
+                  <ChevronRight size={22} color={themeColors.textSecondary} />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -203,46 +143,27 @@ const styles = StyleSheet.create({
   },
   headerText: { flex: 1 },
   headerTitle: { fontSize: 22, fontWeight: '700' },
-  headerSubtitle: { fontSize: 14, marginTop: 2 },
+  headerSubtitle: { fontSize: 13, marginTop: 4, lineHeight: 18 },
   drawerHint: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
     marginBottom: 8,
-    padding: 14,
+    padding: 12,
     borderRadius: 12,
-    gap: 12,
+    gap: 10,
     borderWidth: 1,
     borderColor: 'rgba(10, 132, 255, 0.35)',
   },
-  drawerHintText: { flex: 1 },
-  drawerHintTitle: { fontSize: 15, fontWeight: '600', marginBottom: 2 },
-  drawerHintSubtitle: { fontSize: 13, lineHeight: 18 },
+  drawerHintText: { flex: 1, fontSize: 13 },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 24 },
-  welcomeBlock: { alignItems: 'center', paddingVertical: 20 },
-  iconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  title: { fontSize: 26, fontWeight: 'bold' },
-  subtitle: {
-    fontSize: 15,
-    marginTop: 8,
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 12,
-  },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 32 },
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: 1,
-    marginBottom: 12,
-    marginTop: 4,
+    marginBottom: 10,
+    marginTop: 16,
   },
   featureCard: {
     flexDirection: 'row',

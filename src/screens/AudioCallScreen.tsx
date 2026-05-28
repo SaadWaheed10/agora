@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,74 +7,64 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Phone, PhoneOff, Mic, MicOff, Users } from 'lucide-react-native';
+import { Phone, Users } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 import { useAgoraAudioCall } from '../hooks/useAgoraAudioCall';
 import { ensureFeaturePermissions } from '../hooks/usePermission';
+import { DemoBanner } from '../components/agora/DemoBanner';
+import { CallControls } from '../components/agora/CallControls';
+import { AGORA_FEATURES } from '../constants/agoraFeatures';
+
+const meta = AGORA_FEATURES.find(f => f.route === 'AudioCall')!;
 
 const AudioCallScreen = () => {
-  const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
-  const [channelName] = useState('audio-call-room-123');
-
-  const { isJoined, remoteUid, isMuted, joinCall, leaveCall, toggleMute } =
-    useAgoraAudioCall(channelName);
-
-  const handleJoin = async () => {
-    if (await ensureFeaturePermissions('audioCall')) {
-      await joinCall();
-    }
-  };
+  const themeColors = getThemeColors(true);
+  const {
+    channelName,
+    isJoined,
+    remoteUid,
+    isMuted,
+    speakerOn,
+    joinCall,
+    leaveCall,
+    toggleMute,
+    toggleSpeaker,
+  } = useAgoraAudioCall();
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-            Audio Call
-          </Text>
-          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-            {isJoined
-              ? remoteUid
-                ? `Connected with user ${remoteUid}`
-                : 'Waiting for someone to join...'
-              : 'High-quality audio calling'}
-          </Text>
-        </View>
+        <DemoBanner
+          channel={channelName}
+          sdkFeature={meta.sdkFeature}
+          testHint={meta.testHint}
+        />
 
         <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
           <View style={styles.iconContainer}>
             <Phone size={32} color={Colors.primary} />
           </View>
           <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-            {isJoined ? 'Call in progress' : 'Start Audio Call'}
+            {isJoined ? 'Voice call active' : 'Voice call'}
           </Text>
           <Text
             style={[styles.cardDescription, { color: themeColors.textSecondary }]}
           >
             {isJoined
-              ? `Room: ${channelName}`
-              : 'Create a new audio-only call room'}
+              ? remoteUid
+                ? `Connected with UID ${remoteUid}`
+                : 'Waiting for another user…'
+              : 'Audio-only — publishCameraTrack is false'}
           </Text>
         </View>
 
-        {isJoined && (
+        {isJoined && remoteUid != null && (
           <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-            <View style={styles.iconContainer}>
-              <Users size={32} color={Colors.secondary} />
-            </View>
+            <Users size={28} color={Colors.secondary} />
             <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-              Participants
-            </Text>
-            <Text
-              style={[
-                styles.cardDescription,
-                { color: themeColors.textSecondary },
-              ]}
-            >
-              {remoteUid ? `Remote user: ${remoteUid}` : 'You are the only one here'}
+              Remote UID: {remoteUid}
             </Text>
           </View>
         )}
@@ -83,35 +73,23 @@ const AudioCallScreen = () => {
           {!isJoined ? (
             <TouchableOpacity
               style={[styles.controlButton, { backgroundColor: Colors.primary }]}
-              onPress={handleJoin}
+              onPress={async () => {
+                if (await ensureFeaturePermissions('audioCall')) {
+                  await joinCall();
+                }
+              }}
             >
               <Phone size={24} color={Colors.white} />
-              <Text style={styles.controlButtonText}>Start Audio Call</Text>
+              <Text style={styles.controlButtonText}>Join voice channel</Text>
             </TouchableOpacity>
           ) : (
-            <>
-              <TouchableOpacity
-                style={[styles.controlButton, isMuted && styles.mutedButton]}
-                onPress={toggleMute}
-              >
-                {isMuted ? (
-                  <MicOff size={24} color={Colors.white} />
-                ) : (
-                  <Mic size={24} color={Colors.white} />
-                )}
-                <Text style={styles.controlButtonText}>
-                  {isMuted ? 'Unmute' : 'Mute'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.controlButton, styles.endButton]}
-                onPress={leaveCall}
-              >
-                <PhoneOff size={24} color={Colors.white} />
-                <Text style={styles.controlButtonText}>End Call</Text>
-              </TouchableOpacity>
-            </>
+            <CallControls
+              isMuted={isMuted}
+              speakerOn={speakerOn}
+              onToggleMute={toggleMute}
+              onToggleSpeaker={toggleSpeaker}
+              onEnd={leaveCall}
+            />
           )}
         </View>
       </ScrollView>
@@ -121,14 +99,12 @@ const AudioCallScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { padding: 20, paddingTop: 8 },
-  header: { marginBottom: 30, alignItems: 'center', paddingTop: 16 },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { fontSize: 16, textAlign: 'center' },
+  scrollContent: { padding: 8, paddingBottom: 24 },
   card: {
     padding: 20,
     borderRadius: 12,
-    marginBottom: 16,
+    marginHorizontal: 4,
+    marginBottom: 12,
     alignItems: 'center',
   },
   iconContainer: {
@@ -138,11 +114,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(10, 132, 255, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   cardTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
   cardDescription: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
-  controlsContainer: { marginTop: 20, gap: 12 },
+  controlsContainer: { marginTop: 8 },
   controlButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -150,10 +126,9 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     gap: 8,
+    marginHorizontal: 4,
   },
   controlButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
-  mutedButton: { backgroundColor: Colors.error },
-  endButton: { backgroundColor: Colors.error },
 });
 
 export default AudioCallScreen;

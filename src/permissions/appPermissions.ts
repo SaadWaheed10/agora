@@ -13,16 +13,22 @@ import type { AppFeature, PermissionKind } from './types';
 
 const FEATURE_PERMISSIONS: Record<AppFeature, PermissionKind[]> = {
   videoCall: ['camera', 'microphone', 'bluetooth'],
+  groupCall: ['camera', 'microphone', 'bluetooth'],
   liveStream: ['camera', 'microphone', 'bluetooth'],
+  liveAudience: ['microphone', 'bluetooth'],
   audioCall: ['microphone', 'bluetooth'],
   screenShare: ['microphone', 'bluetooth', 'notifications'],
+  beauty: ['camera', 'microphone', 'bluetooth'],
 };
 
 const FEATURE_LABELS: Record<AppFeature, string> = {
   videoCall: 'Video Call',
+  groupCall: 'Group Video Call',
   liveStream: 'Live Stream',
+  liveAudience: 'Live Audience',
   audioCall: 'Audio Call',
   screenShare: 'Screen Share',
+  beauty: 'Beauty Effects',
 };
 
 function getOsPermission(kind: PermissionKind): Permission | null {

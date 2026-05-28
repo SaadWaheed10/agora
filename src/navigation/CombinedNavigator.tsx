@@ -4,21 +4,41 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   Home,
   Video,
-  Radio,
+  Users,
   Phone,
+  Radio,
+  Eye,
   Monitor,
+  Sparkles,
+  BookOpen,
 } from 'lucide-react-native';
 
 import HomeScreen from '../screens/HomeScreen';
+import AgoraGuideScreen from '../screens/AgoraGuideScreen';
 import LiveStreamScreen from '../screens/LiveStreamScreen';
 import VideoCallScreen from '../screens/VideoCallScreen';
+import GroupVideoCallScreen from '../screens/GroupVideoCallScreen';
 import AudioCallScreen from '../screens/AudioCallScreen';
+import LiveAudienceScreen from '../screens/LiveAudienceScreen';
 import ScreenShareScreen from '../screens/ScreenShareScreen';
+import BeautyEffectsScreen from '../screens/BeautyEffectsScreen';
 
 import { Colors, getThemeColors } from '../constants';
 import { RootDrawerParamList } from './types';
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
+
+const ROUTE_ICONS: Record<keyof RootDrawerParamList, typeof Home> = {
+  Home,
+  AgoraGuide: BookOpen,
+  VideoCall: Video,
+  GroupVideoCall: Users,
+  AudioCall: Phone,
+  LiveStream: Radio,
+  LiveAudience: Eye,
+  ScreenShare: Monitor,
+  BeautyEffects: Sparkles,
+};
 
 const CustomDrawerContent = (props: any) => {
   const themeColors = getThemeColors(true);
@@ -29,12 +49,12 @@ const CustomDrawerContent = (props: any) => {
     >
       <View style={styles.drawerHeader}>
         <Text style={[styles.drawerTitle, { color: themeColors.textPrimary }]}>
-          Agora
+          Agora SDK
         </Text>
         <Text
           style={[styles.drawerSubtitle, { color: themeColors.textSecondary }]}
         >
-          Video & Audio Platform
+          React Native showcase
         </Text>
       </View>
 
@@ -42,37 +62,8 @@ const CustomDrawerContent = (props: any) => {
         {props.state.routes.map((route: any, index: number) => {
           const { options } = props.descriptors[route.key];
           const isFocused = props.state.index === index;
-
-          const onPress = () => {
-            const event = props.navigation.emit({
-              type: 'drawerItemPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!event.defaultPrevented) {
-              props.navigation.navigate(route.name);
-            }
-          };
-
-          const getIcon = (routeName: string) => {
-            switch (routeName) {
-              case 'Home':
-                return Home;
-              case 'LiveStream':
-                return Radio;
-              case 'VideoCall':
-                return Video;
-              case 'AudioCall':
-                return Phone;
-              case 'ScreenShare':
-                return Monitor;
-              default:
-                return Home;
-            }
-          };
-
-          const IconComponent = getIcon(route.name);
+          const IconComponent =
+            ROUTE_ICONS[route.name as keyof RootDrawerParamList] ?? Home;
 
           return (
             <TouchableOpacity
@@ -81,7 +72,16 @@ const CustomDrawerContent = (props: any) => {
                 styles.drawerItem,
                 isFocused && { backgroundColor: Colors.highlight },
               ]}
-              onPress={onPress}
+              onPress={() => {
+                const event = props.navigation.emit({
+                  type: 'drawerItemPress',
+                  target: route.key,
+                  canPreventDefault: true,
+                });
+                if (!event.defaultPrevented) {
+                  props.navigation.navigate(route.name);
+                }
+              }}
             >
               <View style={styles.drawerItemContent}>
                 <IconComponent
@@ -123,77 +123,68 @@ const CombinedNavigator = () => {
           backgroundColor: themeColors.surface,
           width: 280,
         },
-        drawerActiveTintColor: Colors.primary,
-        drawerInactiveTintColor: themeColors.textSecondary,
         overlayColor: 'rgba(0, 0, 0, 0.55)',
       }}
     >
+      <Drawer.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
       <Drawer.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ title: 'Home' }}
-      />
-      <Drawer.Screen
-        name="LiveStream"
-        component={LiveStreamScreen}
-        options={{ title: 'Live Stream' }}
+        name="AgoraGuide"
+        component={AgoraGuideScreen}
+        options={{ title: 'How to Test' }}
       />
       <Drawer.Screen
         name="VideoCall"
         component={VideoCallScreen}
-        options={{ title: 'Video Call' }}
+        options={{ title: '1:1 Video Call' }}
+      />
+      <Drawer.Screen
+        name="GroupVideoCall"
+        component={GroupVideoCallScreen}
+        options={{ title: 'Group Video' }}
       />
       <Drawer.Screen
         name="AudioCall"
         component={AudioCallScreen}
-        options={{ title: 'Audio Call' }}
+        options={{ title: 'Voice Call' }}
+      />
+      <Drawer.Screen
+        name="LiveStream"
+        component={LiveStreamScreen}
+        options={{ title: 'Live Host' }}
+      />
+      <Drawer.Screen
+        name="LiveAudience"
+        component={LiveAudienceScreen}
+        options={{ title: 'Live Audience' }}
       />
       <Drawer.Screen
         name="ScreenShare"
         component={ScreenShareScreen}
         options={{ title: 'Screen Share' }}
       />
+      <Drawer.Screen
+        name="BeautyEffects"
+        component={BeautyEffectsScreen}
+        options={{ title: 'Beauty FX' }}
+      />
     </Drawer.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  drawerContainer: {
-    flex: 1,
-  },
+  drawerContainer: { flex: 1 },
   drawerHeader: {
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
-  drawerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  drawerSubtitle: {
-    fontSize: 14,
-  },
-  drawerContent: {
-    flex: 1,
-    paddingTop: 20,
-  },
-  drawerItem: {
-    marginHorizontal: 16,
-    marginVertical: 4,
-    borderRadius: 8,
-  },
-  drawerItemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  drawerItemText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 16,
-  },
+  drawerTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
+  drawerSubtitle: { fontSize: 14 },
+  drawerContent: { flex: 1, paddingTop: 20 },
+  drawerItem: { marginHorizontal: 16, marginVertical: 4, borderRadius: 8 },
+  drawerItemContent: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  drawerItemText: { fontSize: 16, fontWeight: '500', marginLeft: 16 },
 });
 
 export default CombinedNavigator;

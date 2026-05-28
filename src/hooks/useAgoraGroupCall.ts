@@ -1,38 +1,40 @@
-import { useRef, useEffect, useState } from 'react';
-import { ClientRoleType, IRtcEngineEventHandler } from 'react-native-agora';
+import { useEffect, useRef, useState } from 'react';
+import { ClientRoleType } from 'react-native-agora';
 import { createRtcEngine } from '../agora/createRtcEngine';
 import { AGORA_CHANNELS } from '../constants/channelNames';
 import { TOKEN as token } from '../constants/agoraConstants';
 
-export const useAgoraLiveStream = () => {
-  const channelName = AGORA_CHANNELS.LIVE;
+const channelName = AGORA_CHANNELS.GROUP_CALL;
+
+export const useAgoraGroupCall = () => {
   const [isJoined, setIsJoined] = useState(false);
+  const [remoteUsers, setRemoteUsers] = useState<number[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [speakerOn, setSpeakerOn] = useState(true);
 
   const engineRef = useRef<ReturnType<typeof createRtcEngine> | null>(null);
 
   useEffect(() => {
-    const engine = createRtcEngine('liveBroadcasting');
+    const engine = createRtcEngine('communication');
     engineRef.current = engine;
-    engine.setClientRole(ClientRoleType.ClientRoleBroadcaster);
     engine.enableAudio();
     engine.enableVideo();
+    engine.setEnableSpeakerphone(true);
 
-    engine.setVideoEncoderConfiguration({
-      dimensions: { width: 720, height: 1280 },
-      frameRate: 30,
-      bitrate: 2500,
-      orientationMode: 1,
-    });
-
-    const eventHandler: IRtcEngineEventHandler = {
+    engine.registerEventHandler({
       onJoinChannelSuccess: () => setIsJoined(true),
-      onLeaveChannel: () => setIsJoined(false),
-      onError: (err, msg) => console.warn('Agora Error:', err, msg),
-    };
-
-    engine.registerEventHandler(eventHandler);
+      onUserJoined: (_conn, uid) => {
+        setRemoteUsers(prev => (prev.includes(uid) ? prev : [...prev, uid]));
+      },
+      onUserOffline: (_conn, uid) => {
+        setRemoteUsers(prev => prev.filter(id => id !== uid));
+      },
+      onLeaveChannel: () => {
+        setIsJoined(false);
+        setRemoteUsers([]);
+      },
+    });
 
     return () => {
       engine.leaveChannel();
@@ -40,18 +42,15 @@ export const useAgoraLiveStream = () => {
     };
   }, []);
 
-  const startStream = () => {
-    engineRef.current?.joinChannel(token, channelName, 0, {
+  const join = async () => {
+    await engineRef.current?.joinChannel(token, channelName, 0, {
       publishMicrophoneTrack: true,
       publishCameraTrack: true,
       clientRoleType: ClientRoleType.ClientRoleBroadcaster,
     });
   };
 
-  const endStream = () => {
-    engineRef.current?.leaveChannel();
-    setIsJoined(false);
-  };
+  const leave = () => engineRef.current?.leaveChannel();
 
   const toggleMute = () => {
     const next = !isMuted;
@@ -67,15 +66,24 @@ export const useAgoraLiveStream = () => {
 
   const switchCamera = () => engineRef.current?.switchCamera();
 
+  const toggleSpeaker = () => {
+    const next = !speakerOn;
+    engineRef.current?.setEnableSpeakerphone(next);
+    setSpeakerOn(next);
+  };
+
   return {
     channelName,
     isJoined,
+    remoteUsers,
     isMuted,
     isVideoEnabled,
-    startStream,
-    endStream,
+    speakerOn,
+    join,
+    leave,
     toggleMute,
     toggleVideo,
     switchCamera,
+    toggleSpeaker,
   };
 };

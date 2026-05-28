@@ -1,25 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  createAgoraRtcEngine,
-  ChannelProfileType,
-  ClientRoleType,
-} from 'react-native-agora';
-import { appId, TOKEN as token } from '../constants/agoraConstants';
+import { ClientRoleType } from 'react-native-agora';
+import { createRtcEngine } from '../agora/createRtcEngine';
+import { AGORA_CHANNELS } from '../constants/channelNames';
+import { TOKEN as token } from '../constants/agoraConstants';
 
-export const useAgoraAudioCall = (channelName: string) => {
+export const useAgoraAudioCall = () => {
+  const channelName = AGORA_CHANNELS.AUDIO_CALL;
   const [isJoined, setIsJoined] = useState(false);
   const [remoteUid, setRemoteUid] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [speakerOn, setSpeakerOn] = useState(true);
 
-  const engineRef = useRef<ReturnType<typeof createAgoraRtcEngine> | null>(null);
+  const engineRef = useRef<ReturnType<typeof createRtcEngine> | null>(null);
 
   useEffect(() => {
-    const engine = createAgoraRtcEngine();
+    const engine = createRtcEngine('communication');
     engineRef.current = engine;
-
-    engine.initialize({ appId });
-    engine.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
     engine.enableAudio();
+    engine.setEnableSpeakerphone(true);
 
     engine.registerEventHandler({
       onJoinChannelSuccess: () => setIsJoined(true),
@@ -35,7 +33,7 @@ export const useAgoraAudioCall = (channelName: string) => {
       engine.leaveChannel();
       engine.release();
     };
-  }, [channelName]);
+  }, []);
 
   const joinCall = async () => {
     await engineRef.current?.joinChannel(token, channelName, 0, {
@@ -53,12 +51,21 @@ export const useAgoraAudioCall = (channelName: string) => {
     setIsMuted(next);
   };
 
+  const toggleSpeaker = () => {
+    const next = !speakerOn;
+    engineRef.current?.setEnableSpeakerphone(next);
+    setSpeakerOn(next);
+  };
+
   return {
+    channelName,
     isJoined,
     remoteUid,
     isMuted,
+    speakerOn,
     joinCall,
     leaveCall,
     toggleMute,
+    toggleSpeaker,
   };
 };
