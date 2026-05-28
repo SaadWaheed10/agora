@@ -4,16 +4,14 @@ import {
   ChannelProfileType,
   ClientRoleType,
 } from 'react-native-agora';
-
 import { appId, TOKEN as token } from '../constants/agoraConstants';
 
-export const useAgoraVideoCall = (channelName: string) => {
+export const useAgoraAudioCall = (channelName: string) => {
   const [isJoined, setIsJoined] = useState(false);
   const [remoteUid, setRemoteUid] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
-  const engineRef = useRef<any>(null);
+  const engineRef = useRef<ReturnType<typeof createAgoraRtcEngine> | null>(null);
 
   useEffect(() => {
     const engine = createAgoraRtcEngine();
@@ -22,19 +20,16 @@ export const useAgoraVideoCall = (channelName: string) => {
     engine.initialize({ appId });
     engine.setChannelProfile(ChannelProfileType.ChannelProfileCommunication);
     engine.enableAudio();
-    engine.enableVideo();
 
-    const handler = {
+    engine.registerEventHandler({
       onJoinChannelSuccess: () => setIsJoined(true),
-      onUserJoined: (_connection: any, uid: number) => setRemoteUid(uid),
+      onUserJoined: (_connection, uid) => setRemoteUid(uid),
       onUserOffline: () => setRemoteUid(null),
       onLeaveChannel: () => {
         setIsJoined(false);
         setRemoteUid(null);
       },
-    };
-
-    engine.registerEventHandler(handler);
+    });
 
     return () => {
       engine.leaveChannel();
@@ -43,10 +38,9 @@ export const useAgoraVideoCall = (channelName: string) => {
   }, [channelName]);
 
   const joinCall = async () => {
-    if (!engineRef.current) return;
-    await engineRef.current.joinChannel(token, channelName, 0, {
+    await engineRef.current?.joinChannel(token, channelName, 0, {
       publishMicrophoneTrack: true,
-      publishCameraTrack: true,
+      publishCameraTrack: false,
       clientRoleType: ClientRoleType.ClientRoleBroadcaster,
     });
   };
@@ -54,26 +48,17 @@ export const useAgoraVideoCall = (channelName: string) => {
   const leaveCall = () => engineRef.current?.leaveChannel();
 
   const toggleMute = () => {
-    engineRef.current?.muteLocalAudioStream(!isMuted);
-    setIsMuted(!isMuted);
+    const next = !isMuted;
+    engineRef.current?.muteLocalAudioStream(next);
+    setIsMuted(next);
   };
-
-  const toggleVideo = () => {
-    engineRef.current?.muteLocalVideoStream(!isVideoEnabled);
-    setIsVideoEnabled(!isVideoEnabled);
-  };
-
-  const switchCamera = () => engineRef.current?.switchCamera();
 
   return {
     isJoined,
     remoteUid,
     isMuted,
-    isVideoEnabled,
     joinCall,
     leaveCall,
     toggleMute,
-    toggleVideo,
-    switchCamera,
   };
 };

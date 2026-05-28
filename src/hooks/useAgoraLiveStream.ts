@@ -6,9 +6,9 @@ import {
   IRtcEngineEventHandler,
 } from 'react-native-agora';
 
-const appId = '07c55cff72a54fb3bc2bc5e7736c4615';
+import { appId, TOKEN as token } from '../constants/agoraConstants';
+
 const channelName = 'mylivestream';
-const token = null;
 
 export const useAgoraLiveStream = () => {
   const [isJoined, setIsJoined] = useState(false);

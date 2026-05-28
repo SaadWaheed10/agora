@@ -5,89 +5,106 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
-import { Monitor, Settings } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Monitor, Mic, MicOff, PhoneOff } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
+import { useAgoraScreenShare } from '../hooks/useAgoraScreenShare';
+import { ensureFeaturePermissions } from '../hooks/usePermission';
 
 const ScreenShareScreen = () => {
-  // Force dark mode for consistent theming
   const isDarkMode = true;
   const themeColors = getThemeColors(isDarkMode);
+  const { isSharing, isMuted, startShare, stopShare, toggleMute } =
+    useAgoraScreenShare();
+
+  const handleStart = async () => {
+    if (await ensureFeaturePermissions('screenShare')) {
+      await startShare();
+    }
+  };
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
     >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-          Screen Share
-        </Text>
-        <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-          Share your screen with others
-        </Text>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
-        <View style={styles.iconContainer}>
-          <Monitor size={32} color={Colors.primary} />
-        </View>
-        <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
-          Start Screen Share
-        </Text>
-        <Text
-          style={[styles.cardDescription, { color: themeColors.textSecondary }]}
-        >
-          Share your entire screen or specific applications
-        </Text>
-      </View>
-
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: Colors.primary }]}
-        >
-          <Monitor size={24} color={Colors.white} />
-          <Text style={styles.controlButtonText}>Start Screen Share</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.controlButton,
-            styles.controlButtonWithBorder,
-            {
-              backgroundColor: themeColors.surface,
-              borderColor: Colors.primary,
-            },
-          ]}
-        >
-          <Settings size={24} color={Colors.primary} />
-          <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
-            Share Settings
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
+            Screen Share
           </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
+            {isSharing
+              ? 'Sharing your screen'
+              : Platform.OS === 'android'
+                ? 'Share your screen with others'
+                : 'Screen share is supported on Android'}
+          </Text>
+        </View>
+
+        <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
+          <View style={styles.iconContainer}>
+            <Monitor size={32} color={Colors.primary} />
+          </View>
+          <Text style={[styles.cardTitle, { color: themeColors.textPrimary }]}>
+            {isSharing ? 'Screen share active' : 'Start Screen Share'}
+          </Text>
+          <Text
+            style={[styles.cardDescription, { color: themeColors.textSecondary }]}
+          >
+            {isSharing
+              ? 'Others in the channel can see your screen'
+              : 'Share your entire screen (Android)'}
+          </Text>
+        </View>
+
+        <View style={styles.controlsContainer}>
+          {!isSharing ? (
+            <TouchableOpacity
+              style={[styles.controlButton, { backgroundColor: Colors.primary }]}
+              onPress={handleStart}
+            >
+              <Monitor size={24} color={Colors.white} />
+              <Text style={styles.controlButtonText}>Start Screen Share</Text>
+            </TouchableOpacity>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={[styles.controlButton, isMuted && styles.mutedButton]}
+                onPress={toggleMute}
+              >
+                {isMuted ? (
+                  <MicOff size={24} color={Colors.white} />
+                ) : (
+                  <Mic size={24} color={Colors.white} />
+                )}
+                <Text style={styles.controlButtonText}>
+                  {isMuted ? 'Unmute' : 'Mute'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.controlButton, styles.endButton]}
+                onPress={stopShare}
+              >
+                <PhoneOff size={24} color={Colors.white} />
+                <Text style={styles.controlButtonText}>Stop Sharing</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 70,
-  },
-  header: {
-    marginBottom: 30,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
+  container: { flex: 1 },
+  scrollContent: { padding: 20, paddingTop: 8 },
+  header: { marginBottom: 30, alignItems: 'center', paddingTop: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 16, textAlign: 'center' },
   card: {
     padding: 20,
     borderRadius: 12,
@@ -103,20 +120,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 14,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  controlsContainer: {
-    marginTop: 20,
-    gap: 12,
-  },
+  cardTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
+  cardDescription: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  controlsContainer: { marginTop: 20, gap: 12 },
   controlButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -124,15 +130,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     gap: 8,
+    backgroundColor: Colors.gray[800],
   },
-  controlButtonText: {
-    color: Colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  controlButtonWithBorder: {
-    borderWidth: 1,
-  },
+  controlButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
+  mutedButton: { backgroundColor: Colors.error },
+  endButton: { backgroundColor: Colors.error },
 });
 
 export default ScreenShareScreen;

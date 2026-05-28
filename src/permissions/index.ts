@@ -1,8 +1,8 @@
+export type { AppFeature, PermissionKind } from './types';
 export {
   checkFeaturePermissions,
   requestFeaturePermissions,
   ensureFeaturePermissions,
   ensureMediaPermissions,
   requestMediaPermissions,
-} from '../permissions';
-export type { AppFeature } from '../permissions';
+} from './appPermissions';

@@ -15,6 +15,7 @@ import {
 import { RtcSurfaceView, VideoSourceType } from 'react-native-agora';
 import Colors, { getThemeColors } from '../constants/colors';
 import { useAgoraVideoCall } from '../hooks/useAgoraVideoCall';
+import { ensureFeaturePermissions } from '../hooks/usePermission';
 
 const VideoCallScreen = () => {
   const isDarkMode = true;
@@ -140,34 +141,16 @@ const VideoCallScreen = () => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: Colors.primary }]}
-              onPress={joinCall}
+              onPress={async () => {
+                if (await ensureFeaturePermissions('videoCall')) {
+                  await joinCall();
+                }
+              }}
             >
               <Phone size={24} color={Colors.white} />
               <Text style={styles.buttonText}>Start Call</Text>
             </TouchableOpacity>
-
-            {/* <TouchableOpacity
-              style={[
-                styles.actionButton,
-                { backgroundColor: Colors.secondary },
-              ]}
-              onPress={() =>
-                Alert.alert('Join Call', 'Enter room code to join')
-              }
-            >
-              <Users size={24} color={Colors.white} />
-              <Text style={styles.buttonText}>Join Call</Text>
-            </TouchableOpacity> */}
           </View>
-
-          {/* <TouchableOpacity
-            style={[styles.settingsButton, { borderColor: Colors.primary }]}
-          >
-            <Settings size={24} color={Colors.primary} />
-            <Text style={[styles.settingsText, { color: Colors.primary }]}>
-              Call Settings
-            </Text>
-          </TouchableOpacity> */}
         </>
       )}
     </SafeAreaView>
@@ -253,16 +236,4 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   buttonText: { color: Colors.white, fontSize: 18, fontWeight: '700' },
-  settingsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderWidth: 2,
-    borderRadius: 16,
-    marginTop: 16,
-    marginHorizontal: 20,
-    gap: 10,
-  },
-  settingsText: { fontSize: 16, fontWeight: '600' },
 });

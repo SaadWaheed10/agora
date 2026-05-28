@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Radio,
-  Settings,
   Mic,
   MicOff,
   Video,
@@ -20,6 +19,7 @@ import {
 import { RtcSurfaceView, VideoSourceType } from 'react-native-agora';
 import Colors, { getThemeColors } from '../constants/colors';
 import { useAgoraLiveStream } from '../hooks/useAgoraLiveStream';
+import { ensureFeaturePermissions } from '../hooks/usePermission';
 
 const { width } = Dimensions.get('window');
 
@@ -93,7 +93,11 @@ const LiveStreamScreen = () => {
         {!isJoined ? (
           <TouchableOpacity
             style={[styles.controlButton, { backgroundColor: Colors.primary }]}
-            onPress={startStream}
+            onPress={async () => {
+              if (await ensureFeaturePermissions('liveStream')) {
+                startStream();
+              }
+            }}
           >
             <Mic size={24} color={Colors.white} />
             <Text style={styles.controlButtonText}>Start Streaming</Text>
@@ -130,22 +134,6 @@ const LiveStreamScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-
-        <TouchableOpacity
-          style={[
-            styles.controlButton,
-            styles.borderBtn,
-            {
-              backgroundColor: theme.surface,
-              borderColor: Colors.primary,
-            },
-          ]}
-        >
-          <Settings size={24} color={Colors.primary} />
-          <Text style={[styles.controlButtonText, { color: Colors.primary }]}>
-            Settings
-          </Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -230,10 +218,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     marginTop: 20,
-  },
-  borderBtn: {
-    borderWidth: 2,
-    marginTop: 16,
   },
   controlButtonText: {
     fontSize: 17,

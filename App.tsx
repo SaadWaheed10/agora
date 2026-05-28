@@ -1,18 +1,19 @@
 /**
  * Agora React Native App
- * Bottom Tab Navigation with Home and Agora screens
  *
  * @format
  */
 
 import React from 'react';
 import { StatusBar, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppNavigator } from './src/navigation';
 
 function App() {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
       <StatusBar
         barStyle="light-content"
@@ -21,6 +22,7 @@ function App() {
       />
       <AppNavigator />
     </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

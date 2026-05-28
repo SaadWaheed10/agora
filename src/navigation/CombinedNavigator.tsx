@@ -1,6 +1,5 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   Home,
@@ -8,82 +7,21 @@ import {
   Radio,
   Phone,
   Monitor,
-  Settings,
 } from 'lucide-react-native';
 
-// Import screens
 import HomeScreen from '../screens/HomeScreen';
-import AgoraScreen from '../screens/AgoraScreen';
 import LiveStreamScreen from '../screens/LiveStreamScreen';
 import VideoCallScreen from '../screens/VideoCallScreen';
 import AudioCallScreen from '../screens/AudioCallScreen';
 import ScreenShareScreen from '../screens/ScreenShareScreen';
-import SettingsScreen from '../screens/SettingsScreen';
 
 import { Colors, getThemeColors } from '../constants';
-import { RootDrawerParamList, RootTabParamList } from './types';
+import { RootDrawerParamList } from './types';
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
-const Tab = createBottomTabNavigator<RootTabParamList>();
 
-// Icon components defined outside render to avoid React warnings
-const HomeIcon = ({ color, size }: { color: string; size: number }) => (
-  <Home size={size} color={color} />
-);
-
-const VideoIcon = ({ color, size }: { color: string; size: number }) => (
-  <Video size={size} color={color} />
-);
-
-// Bottom Tab Navigator
-const TabNavigator = () => {
-  const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
-
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: Colors.tabBar.active,
-        tabBarInactiveTintColor: Colors.tabBar.inactive,
-        tabBarStyle: {
-          backgroundColor: themeColors.tabBarBackground,
-          borderTopColor: themeColors.tabBarBorder,
-          borderTopWidth: 0.5,
-          elevation: 0,
-          shadowOpacity: 0,
-          height: 75,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: HomeIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Agora"
-        component={AgoraScreen}
-        options={{
-          tabBarIcon: VideoIcon,
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
-
-// Custom drawer content component
 const CustomDrawerContent = (props: any) => {
-  const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
+  const themeColors = getThemeColors(true);
 
   return (
     <View
@@ -119,7 +57,7 @@ const CustomDrawerContent = (props: any) => {
 
           const getIcon = (routeName: string) => {
             switch (routeName) {
-              case 'MainTabs':
+              case 'Home':
                 return Home;
               case 'LiveStream':
                 return Radio;
@@ -129,8 +67,6 @@ const CustomDrawerContent = (props: any) => {
                 return Phone;
               case 'ScreenShare':
                 return Monitor;
-              case 'Settings':
-                return Settings;
               default:
                 return Home;
             }
@@ -173,69 +109,49 @@ const CustomDrawerContent = (props: any) => {
   );
 };
 
-// Main Drawer Navigator
-function drawerContent(props: any) {
-  return <CustomDrawerContent {...props} />;
-}
-
-const DrawerNavigator = () => {
-  const isDarkMode = true;
-  const themeColors = getThemeColors(isDarkMode);
+const CombinedNavigator = () => {
+  const themeColors = getThemeColors(true);
 
   return (
     <Drawer.Navigator
-      drawerContent={drawerContent}
+      drawerContent={props => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
+        swipeEnabled: true,
+        swipeEdgeWidth: 48,
         drawerStyle: {
           backgroundColor: themeColors.surface,
           width: 280,
         },
         drawerActiveTintColor: Colors.primary,
         drawerInactiveTintColor: themeColors.textSecondary,
+        overlayColor: 'rgba(0, 0, 0, 0.55)',
       }}
     >
       <Drawer.Screen
-        name="MainTabs"
-        component={TabNavigator}
-        options={{
-          title: 'Home',
-        }}
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Home' }}
       />
       <Drawer.Screen
         name="LiveStream"
         component={LiveStreamScreen}
-        options={{
-          title: 'Live Stream',
-        }}
+        options={{ title: 'Live Stream' }}
       />
       <Drawer.Screen
         name="VideoCall"
         component={VideoCallScreen}
-        options={{
-          title: 'Video Call',
-        }}
+        options={{ title: 'Video Call' }}
       />
       <Drawer.Screen
         name="AudioCall"
         component={AudioCallScreen}
-        options={{
-          title: 'Audio Call',
-        }}
+        options={{ title: 'Audio Call' }}
       />
       <Drawer.Screen
         name="ScreenShare"
         component={ScreenShareScreen}
-        options={{
-          title: 'Screen Share',
-        }}
-      />
-      <Drawer.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          title: 'Settings',
-        }}
+        options={{ title: 'Screen Share' }}
       />
     </Drawer.Navigator>
   );
@@ -280,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DrawerNavigator;
+export default CombinedNavigator;
