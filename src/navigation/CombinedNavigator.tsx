@@ -1,5 +1,9 @@
 import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  type DrawerContentComponentProps,
+} from '@react-navigation/drawer';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   Home,
@@ -69,14 +73,21 @@ const ROUTE_ICONS: Record<keyof RootDrawerParamList, typeof Home> = {
   NetworkProbe: Activity,
 };
 
-const CustomDrawerContent = (props: any) => {
+const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const themeColors = getThemeColors(true);
 
   return (
-    <View
+    <DrawerContentScrollView
+      {...props}
       style={[styles.drawerContainer, { backgroundColor: themeColors.surface }]}
+      contentContainerStyle={styles.drawerScrollContent}
     >
-      <View style={styles.drawerHeader}>
+      <View
+        style={[
+          styles.drawerHeader,
+          { borderBottomColor: themeColors.border },
+        ]}
+      >
         <Text style={[styles.drawerTitle, { color: themeColors.textPrimary }]}>
           Agora SDK
         </Text>
@@ -87,54 +98,52 @@ const CustomDrawerContent = (props: any) => {
         </Text>
       </View>
 
-      <View style={styles.drawerContent}>
-        {props.state.routes.map((route: any, index: number) => {
-          const { options } = props.descriptors[route.key];
-          const isFocused = props.state.index === index;
-          const IconComponent =
-            ROUTE_ICONS[route.name as keyof RootDrawerParamList] ?? Home;
+      {props.state.routes.map((route, index) => {
+        const { options } = props.descriptors[route.key];
+        const isFocused = props.state.index === index;
+        const IconComponent =
+          ROUTE_ICONS[route.name as keyof RootDrawerParamList] ?? Home;
 
-          return (
-            <TouchableOpacity
-              key={route.key}
-              style={[
-                styles.drawerItem,
-                isFocused && { backgroundColor: Colors.highlight },
-              ]}
-              onPress={() => {
-                const event = props.navigation.emit({
-                  type: 'drawerItemPress',
-                  target: route.key,
-                  canPreventDefault: true,
-                });
-                if (!event.defaultPrevented) {
-                  props.navigation.navigate(route.name);
-                }
-              }}
-            >
-              <View style={styles.drawerItemContent}>
-                <IconComponent
-                  size={24}
-                  color={isFocused ? Colors.primary : themeColors.textSecondary}
-                />
-                <Text
-                  style={[
-                    styles.drawerItemText,
-                    {
-                      color: isFocused
-                        ? Colors.primary
-                        : themeColors.textPrimary,
-                    },
-                  ]}
-                >
-                  {options.title || route.name}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </View>
+        return (
+          <TouchableOpacity
+            key={route.key}
+            style={[
+              styles.drawerItem,
+              isFocused && { backgroundColor: Colors.highlight },
+            ]}
+            onPress={() => {
+              const event = props.navigation.emit({
+                type: 'drawerItemPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!event.defaultPrevented) {
+                props.navigation.navigate(route.name);
+              }
+            }}
+          >
+            <View style={styles.drawerItemContent}>
+              <IconComponent
+                size={24}
+                color={isFocused ? Colors.primary : themeColors.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.drawerItemText,
+                  {
+                    color: isFocused
+                      ? Colors.primary
+                      : themeColors.textPrimary,
+                  },
+                ]}
+              >
+                {options.title || route.name}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </DrawerContentScrollView>
   );
 };
 
@@ -275,16 +284,19 @@ const CombinedNavigator = () => {
 
 const styles = StyleSheet.create({
   drawerContainer: { flex: 1 },
+  drawerScrollContent: {
+    paddingTop: 8,
+    paddingBottom: 24,
+  },
   drawerHeader: {
-    padding: 20,
-    paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 8,
+    paddingBottom: 16,
+    marginBottom: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   drawerTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
   drawerSubtitle: { fontSize: 14 },
-  drawerContent: { flex: 1, paddingTop: 20 },
-  drawerItem: { marginHorizontal: 16, marginVertical: 4, borderRadius: 8 },
+  drawerItem: { marginHorizontal: 4, marginVertical: 4, borderRadius: 8 },
   drawerItemContent: { flexDirection: 'row', alignItems: 'center', padding: 16 },
   drawerItemText: { fontSize: 16, fontWeight: '500', marginLeft: 16 },
 });
