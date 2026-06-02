@@ -11,6 +11,14 @@ import {
   Monitor,
   Sparkles,
   BookOpen,
+  Layers,
+  Mic2,
+  Repeat,
+  Shield,
+  BarChart3,
+  Activity,
+  Music,
+  UserPlus,
 } from 'lucide-react-native';
 
 import HomeScreen from '../screens/HomeScreen';
@@ -22,6 +30,14 @@ import AudioCallScreen from '../screens/AudioCallScreen';
 import LiveAudienceScreen from '../screens/LiveAudienceScreen';
 import ScreenShareScreen from '../screens/ScreenShareScreen';
 import BeautyEffectsScreen from '../screens/BeautyEffectsScreen';
+import VirtualBackgroundScreen from '../screens/VirtualBackgroundScreen';
+import VoiceEffectsScreen from '../screens/VoiceEffectsScreen';
+import EchoTestScreen from '../screens/EchoTestScreen';
+import NoiseSuppressionScreen from '../screens/NoiseSuppressionScreen';
+import VolumeIndicatorScreen from '../screens/VolumeIndicatorScreen';
+import NetworkProbeScreen from '../screens/NetworkProbeScreen';
+import AudioMixingScreen from '../screens/AudioMixingScreen';
+import LiveCoHostScreen from '../screens/LiveCoHostScreen';
 
 import { Colors, getThemeColors } from '../constants';
 import { ScreenHeader } from '../components';
@@ -39,10 +55,18 @@ const ROUTE_ICONS: Record<keyof RootDrawerParamList, typeof Home> = {
   VideoCall: Video,
   GroupVideoCall: Users,
   AudioCall: Phone,
+  VoiceEffects: Mic2,
+  VolumeIndicator: BarChart3,
   LiveStream: Radio,
   LiveAudience: Eye,
+  LiveCoHost: UserPlus,
   ScreenShare: Monitor,
   BeautyEffects: Sparkles,
+  VirtualBackground: Layers,
+  NoiseSuppression: Shield,
+  AudioMixing: Music,
+  EchoTest: Repeat,
+  NetworkProbe: Activity,
 };
 
 const CustomDrawerContent = (props: any) => {
@@ -204,6 +228,46 @@ const CombinedNavigator = () => {
         name="BeautyEffects"
         component={BeautyEffectsScreen}
         options={{ title: 'Beauty FX' }}
+      />
+      <Drawer.Screen
+        name="VirtualBackground"
+        component={VirtualBackgroundScreen}
+        options={{ title: 'Virtual Background' }}
+      />
+      <Drawer.Screen
+        name="VoiceEffects"
+        component={VoiceEffectsScreen}
+        options={{ title: 'Voice Effects' }}
+      />
+      <Drawer.Screen
+        name="NoiseSuppression"
+        component={NoiseSuppressionScreen}
+        options={{ title: 'Noise Suppression' }}
+      />
+      <Drawer.Screen
+        name="AudioMixing"
+        component={AudioMixingScreen}
+        options={{ title: 'Audio Mixing' }}
+      />
+      <Drawer.Screen
+        name="LiveCoHost"
+        component={LiveCoHostScreen}
+        options={{ title: 'Live Co-Host' }}
+      />
+      <Drawer.Screen
+        name="EchoTest"
+        component={EchoTestScreen}
+        options={{ title: 'Echo Test' }}
+      />
+      <Drawer.Screen
+        name="VolumeIndicator"
+        component={VolumeIndicatorScreen}
+        options={{ title: 'Volume Indicator' }}
+      />
+      <Drawer.Screen
+        name="NetworkProbe"
+        component={NetworkProbeScreen}
+        options={{ title: 'Network Probe' }}
       />
     </Drawer.Navigator>
   );

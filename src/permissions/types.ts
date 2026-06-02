@@ -5,6 +5,14 @@ export type AppFeature =
   | 'liveAudience'
   | 'audioCall'
   | 'screenShare'
-  | 'beauty';
+  | 'beauty'
+  | 'virtualBackground'
+  | 'voiceEffects'
+  | 'echoTest'
+  | 'noiseSuppression'
+  | 'volumeIndicator'
+  | 'networkProbe'
+  | 'audioMixing'
+  | 'liveCoHost';
 
 export type PermissionKind = 'camera' | 'microphone' | 'bluetooth' | 'notifications';

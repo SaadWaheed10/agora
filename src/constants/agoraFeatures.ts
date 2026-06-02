@@ -8,6 +8,14 @@ import {
   Monitor,
   Sparkles,
   BookOpen,
+  Layers,
+  Mic2,
+  Repeat,
+  Shield,
+  BarChart3,
+  Activity,
+  Music,
+  UserPlus,
 } from 'lucide-react-native';
 import { Colors } from './colors';
 import { AGORA_CHANNELS } from './channelNames';
@@ -16,6 +24,7 @@ export type AgoraFeatureCategory =
   | 'Communication'
   | 'Live Streaming'
   | 'Media & Effects'
+  | 'Diagnostics'
   | 'Learn';
 
 export type AgoraFeatureItem = {
@@ -33,6 +42,7 @@ export const AGORA_FEATURE_CATEGORIES: AgoraFeatureCategory[] = [
   'Communication',
   'Live Streaming',
   'Media & Effects',
+  'Diagnostics',
   'Learn',
 ];
 
@@ -68,6 +78,26 @@ export const AGORA_FEATURES: AgoraFeatureItem[] = [
     category: 'Communication',
   },
   {
+    route: 'VoiceEffects',
+    title: 'Voice Effects',
+    description: 'Preset voice changer and room acoustics',
+    sdkFeature: 'setAudioEffectPreset + setVoiceBeautifierPreset',
+    testHint: `Join "${AGORA_CHANNELS.VOICE_FX}" and try presets while speaking.`,
+    icon: Mic2,
+    color: Colors.secondaryLight,
+    category: 'Communication',
+  },
+  {
+    route: 'VolumeIndicator',
+    title: 'Volume Indicator',
+    description: 'Real-time speaking volume for local and remote users',
+    sdkFeature: 'enableAudioVolumeIndication + onAudioVolumeIndication',
+    testHint: `Join "${AGORA_CHANNELS.VOLUME}" on two devices and watch the meters.`,
+    icon: BarChart3,
+    color: Colors.info,
+    category: 'Communication',
+  },
+  {
     route: 'LiveStream',
     title: 'Live Stream (Host)',
     description: 'Broadcast as host with live profile',
@@ -85,6 +115,16 @@ export const AGORA_FEATURES: AgoraFeatureItem[] = [
     testHint: `Open Host on device A, Audience on device B — same channel.`,
     icon: Eye,
     color: Colors.primaryLight,
+    category: 'Live Streaming',
+  },
+  {
+    route: 'LiveCoHost',
+    title: 'Live Co-Host',
+    description: 'Switch between audience and broadcaster in a live channel',
+    sdkFeature: 'setClientRole + updateChannelMediaOptions',
+    testHint: `Join "${AGORA_CHANNELS.COHOST}" as audience, then promote to host.`,
+    icon: UserPlus,
+    color: Colors.accentLight,
     category: 'Live Streaming',
   },
   {
@@ -106,6 +146,56 @@ export const AGORA_FEATURES: AgoraFeatureItem[] = [
     icon: Sparkles,
     color: Colors.secondary,
     category: 'Media & Effects',
+  },
+  {
+    route: 'VirtualBackground',
+    title: 'Virtual Background',
+    description: 'Blur or replace the camera background',
+    sdkFeature: 'enableVirtualBackground + SegmentationProperty',
+    testHint: `Join "${AGORA_CHANNELS.VIRTUAL_BG}" and try blur or solid color.`,
+    icon: Layers,
+    color: Colors.primaryLight,
+    category: 'Media & Effects',
+  },
+  {
+    route: 'NoiseSuppression',
+    title: 'AI Noise Suppression',
+    description: 'AINS modes for cleaner microphone audio',
+    sdkFeature: 'setAINSMode (balanced / aggressive / ultra-low latency)',
+    testHint: `Join "${AGORA_CHANNELS.NOISE}" and compare AINS modes in a noisy room.`,
+    icon: Shield,
+    color: Colors.success,
+    category: 'Media & Effects',
+  },
+  {
+    route: 'AudioMixing',
+    title: 'Audio Mixing',
+    description: 'Play music into the channel alongside the mic',
+    sdkFeature: 'startAudioMixing + onAudioMixingStateChanged',
+    testHint: `Join "${AGORA_CHANNELS.AUDIO_MIX}" and play the bundled demo track.`,
+    icon: Music,
+    color: Colors.accent,
+    category: 'Media & Effects',
+  },
+  {
+    route: 'EchoTest',
+    title: 'Echo Test',
+    description: 'Loopback test for mic and speaker before joining',
+    sdkFeature: 'startEchoTest + stopEchoTest',
+    testHint: 'Speak into the mic — you should hear yourself after ~2 seconds.',
+    icon: Repeat,
+    color: Colors.warning,
+    category: 'Diagnostics',
+  },
+  {
+    route: 'NetworkProbe',
+    title: 'Network Probe',
+    description: 'Last-mile uplink/downlink quality test',
+    sdkFeature: 'startLastmileProbeTest + onLastmileProbeResult',
+    testHint: 'Run probe before going live to check packet loss, jitter, and RTT.',
+    icon: Activity,
+    color: Colors.primary,
+    category: 'Diagnostics',
   },
   {
     route: 'AgoraGuide',

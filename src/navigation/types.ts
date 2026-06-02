@@ -8,4 +8,12 @@ export type RootDrawerParamList = {
   LiveAudience: undefined;
   ScreenShare: undefined;
   BeautyEffects: undefined;
+  VirtualBackground: undefined;
+  VoiceEffects: undefined;
+  EchoTest: undefined;
+  NoiseSuppression: undefined;
+  VolumeIndicator: undefined;
+  NetworkProbe: undefined;
+  AudioMixing: undefined;
+  LiveCoHost: undefined;
 };

@@ -19,6 +19,14 @@ const FEATURE_PERMISSIONS: Record<AppFeature, PermissionKind[]> = {
   audioCall: ['microphone', 'bluetooth'],
   screenShare: ['microphone', 'bluetooth', 'notifications'],
   beauty: ['camera', 'microphone', 'bluetooth'],
+  virtualBackground: ['camera', 'microphone', 'bluetooth'],
+  voiceEffects: ['microphone', 'bluetooth'],
+  echoTest: ['microphone', 'bluetooth'],
+  noiseSuppression: ['camera', 'microphone', 'bluetooth'],
+  volumeIndicator: ['microphone', 'bluetooth'],
+  networkProbe: [],
+  audioMixing: ['microphone', 'bluetooth'],
+  liveCoHost: ['camera', 'microphone', 'bluetooth'],
 };
 
 const FEATURE_LABELS: Record<AppFeature, string> = {
@@ -29,6 +37,14 @@ const FEATURE_LABELS: Record<AppFeature, string> = {
   audioCall: 'Audio Call',
   screenShare: 'Screen Share',
   beauty: 'Beauty Effects',
+  virtualBackground: 'Virtual Background',
+  voiceEffects: 'Voice Effects',
+  echoTest: 'Echo Test',
+  noiseSuppression: 'Noise Suppression',
+  volumeIndicator: 'Volume Indicator',
+  networkProbe: 'Network Probe',
+  audioMixing: 'Audio Mixing',
+  liveCoHost: 'Live Co-Host',
 };
 
 function getOsPermission(kind: PermissionKind): Permission | null {
