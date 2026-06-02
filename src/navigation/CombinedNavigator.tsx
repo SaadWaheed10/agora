@@ -24,9 +24,14 @@ import ScreenShareScreen from '../screens/ScreenShareScreen';
 import BeautyEffectsScreen from '../screens/BeautyEffectsScreen';
 
 import { Colors, getThemeColors } from '../constants';
+import { ScreenHeader } from '../components';
 import { RootDrawerParamList } from './types';
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
+
+const ROUTE_SUBTITLES: Partial<Record<keyof RootDrawerParamList, string>> = {
+  Home: 'react-native-agora demos for the RN community',
+};
 
 const ROUTE_ICONS: Record<keyof RootDrawerParamList, typeof Home> = {
   Home,
@@ -112,21 +117,54 @@ const CustomDrawerContent = (props: any) => {
 const CombinedNavigator = () => {
   const themeColors = getThemeColors(true);
 
+  const handleHeaderBack = (
+    navigation: { canGoBack: () => boolean; goBack: () => void; navigate: (name: 'Home') => void },
+  ) => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Home');
+    }
+  };
+
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: false,
-        swipeEnabled: true,
-        swipeEdgeWidth: 48,
-        drawerStyle: {
-          backgroundColor: themeColors.surface,
-          width: 280,
-        },
-        overlayColor: 'rgba(0, 0, 0, 0.55)',
+      screenOptions={({ navigation, route }) => {
+        const routeName = route.name as keyof RootDrawerParamList;
+        const isHome = routeName === 'Home';
+
+        return {
+          headerShown: true,
+          header: ({ options }) => (
+            <ScreenHeader
+              title={options.title ?? route.name}
+              subtitle={ROUTE_SUBTITLES[routeName]}
+              leftAction={isHome ? 'menu' : 'back'}
+              onLeftPress={() => {
+                if (isHome) {
+                  navigation.openDrawer();
+                } else {
+                  handleHeaderBack(navigation);
+                }
+              }}
+            />
+          ),
+          swipeEnabled: true,
+          swipeEdgeWidth: 48,
+          drawerStyle: {
+            backgroundColor: themeColors.surface,
+            width: 280,
+          },
+          overlayColor: 'rgba(0, 0, 0, 0.55)',
+        };
       }}
     >
-      <Drawer.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
+      <Drawer.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'Agora Showcase' }}
+      />
       <Drawer.Screen
         name="AgoraGuide"
         component={AgoraGuideScreen}

@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { DrawerNavigationProp } from '@react-navigation/drawer';
-import { Menu, ChevronRight, PanelLeftOpen } from 'lucide-react-native';
+import { ChevronRight, PanelLeftOpen } from 'lucide-react-native';
 import { Colors, getThemeColors } from '../constants';
 import type { RootDrawerParamList } from '../navigation/types';
 import {
@@ -32,27 +32,8 @@ const HomeScreen = () => {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
-      edges={['top']}
+      edges={['bottom', 'left', 'right']}
     >
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={[styles.menuButton, { backgroundColor: themeColors.surface }]}
-          onPress={openDrawer}
-        >
-          <Menu size={24} color={Colors.primary} />
-        </TouchableOpacity>
-        <View style={styles.headerText}>
-          <Text style={[styles.headerTitle, { color: themeColors.textPrimary }]}>
-            Agora Showcase
-          </Text>
-          <Text
-            style={[styles.headerSubtitle, { color: themeColors.textSecondary }]}
-          >
-            react-native-agora demos for the RN community
-          </Text>
-        </View>
-      </View>
-
       <TouchableOpacity
         style={[styles.drawerHint, { backgroundColor: themeColors.surface }]}
         onPress={openDrawer}
@@ -126,28 +107,11 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 12,
-    gap: 14,
-  },
-  menuButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerText: { flex: 1 },
-  headerTitle: { fontSize: 22, fontWeight: '700' },
-  headerSubtitle: { fontSize: 13, marginTop: 4, lineHeight: 18 },
   drawerHint: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
+    marginTop: 12,
     marginBottom: 8,
     padding: 12,
     borderRadius: 12,

@@ -10,11 +10,11 @@ const AgoraGuideScreen = () => {
   const theme = getThemeColors(true);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={['bottom', 'left', 'right']}
+    >
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.title, { color: theme.textPrimary }]}>
-          Agora RN SDK Showcase
-        </Text>
         <Text style={[styles.body, { color: theme.textSecondary }]}>
           This app demonstrates react-native-agora v4 APIs. Use two physical devices
           or simulators with camera enabled for the best results.
@@ -91,7 +91,6 @@ export default AgoraGuideScreen;
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 26, fontWeight: '800', marginBottom: 12 },
   body: { fontSize: 15, lineHeight: 22, marginBottom: 8 },
   section: { marginTop: 24 },
   sectionTitle: { fontSize: 18, fontWeight: '700', marginBottom: 10 },

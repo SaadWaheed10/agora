@@ -34,6 +34,7 @@ const AudioCallScreen = () => {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <DemoBanner

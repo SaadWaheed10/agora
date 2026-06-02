@@ -31,6 +31,7 @@ const ScreenShareScreen = () => {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: themeColors.background }]}
+      edges={['bottom', 'left', 'right']}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <DemoBanner
@@ -38,18 +39,6 @@ const ScreenShareScreen = () => {
           sdkFeature={meta.sdkFeature}
           testHint={meta.testHint}
         />
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: themeColors.textPrimary }]}>
-            Screen Share
-          </Text>
-          <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>
-            {isSharing
-              ? 'Sharing your screen'
-              : Platform.OS === 'android'
-                ? 'Share your screen with others'
-                : 'Screen share is supported on Android'}
-          </Text>
-        </View>
 
         <View style={[styles.card, { backgroundColor: themeColors.surface }]}>
           <View style={styles.iconContainer}>
@@ -63,7 +52,9 @@ const ScreenShareScreen = () => {
           >
             {isSharing
               ? 'Others in the channel can see your screen'
-              : 'Share your entire screen (Android)'}
+              : Platform.OS === 'android'
+                ? 'Share your entire screen with others in the channel'
+                : 'Screen share is supported on Android'}
           </Text>
         </View>
 
@@ -110,9 +101,6 @@ const ScreenShareScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { padding: 20, paddingTop: 8 },
-  header: { marginBottom: 30, alignItems: 'center', paddingTop: 16 },
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { fontSize: 16, textAlign: 'center' },
   card: {
     padding: 20,
     borderRadius: 12,

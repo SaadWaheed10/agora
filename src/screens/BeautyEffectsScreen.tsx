@@ -72,7 +72,10 @@ const BeautyEffectsScreen = () => {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={['bottom', 'left', 'right']}
+    >
       {!isJoined ? (
         <ScrollView contentContainerStyle={styles.preJoin}>
           <DemoBanner

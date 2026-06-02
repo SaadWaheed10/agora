@@ -43,6 +43,7 @@ const LiveStreamScreen = () => {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
+      edges={['bottom', 'left', 'right']}
     >
       {!isJoined && (
         <DemoBanner
@@ -52,17 +53,14 @@ const LiveStreamScreen = () => {
         />
       )}
 
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.textPrimary }]}>
-          {isJoined ? 'LIVE NOW' : 'Go Live'}
-        </Text>
-        {isJoined && (
+      {isJoined && (
+        <View style={styles.liveBadgeRow}>
           <View style={styles.liveBadge}>
             <View style={styles.liveDot} />
             <Text style={styles.liveText}>LIVE</Text>
           </View>
-        )}
-      </View>
+        </View>
+      )}
 
       {/* Video Preview */}
       <View style={styles.videoContainer}>
@@ -131,8 +129,7 @@ export default LiveStreamScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { alignItems: 'center', paddingVertical: 24 },
-  title: { fontSize: 34, fontWeight: '800' },
+  liveBadgeRow: { alignItems: 'center', paddingTop: 12, paddingBottom: 4 },
   liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -140,7 +137,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    marginTop: 12,
   },
   liveDot: {
     width: 10,

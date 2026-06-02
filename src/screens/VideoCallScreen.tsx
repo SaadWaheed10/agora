@@ -30,7 +30,10 @@ const VideoCallScreen = () => {
   } = useAgoraVideoCall();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      edges={['bottom', 'left', 'right']}
+    >
       {isJoined ? (
         <>
           <View style={styles.videoContainer}>
